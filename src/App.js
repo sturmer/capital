@@ -1,43 +1,80 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 
-const costs = [
+const initialCategories = [
   { name: "utilities", cost: 13.9 },
   { name: "housing", cost: 21.4 },
   { name: "foodDelivery", cost: 5.6 }
 ];
 
-function createCategory() {
-  // TODO Dialog with name; then add row to table CategoryPanel
+function NewCategoryForm(props) {
+  const [categoryName, setCategoryName] = useState("");
+
+  const handleCategoryChange = event => {
+    setCategoryName(event.target.value);
+  };
+
+  const handleCategorySubmit = event => {
+    // Hide form
+    props.handleVisibility(false);
+
+    // add row with category
+    addCategory(categoryName);
+
+    event.preventDefault(); // crucial, or the whole page would be reloaded
+  };
+
+  const addCategory = _event => {
+    props.handleCategories([
+      ...props.currentCategories,
+      {name: categoryName, value: null}
+    ]);
+  };
+
+  return (
+    <form onSubmit={handleCategorySubmit}>
+      <label htmlFor="categoryName">Category Name</label>
+      <input
+        type="text"
+        name="categoryName"
+        value={categoryName}
+        onChange={handleCategoryChange} 
+      ></input>
+      <button>Add</button>
+    </form>
+  );
 }
 
 function App() {
   // TODO get categories from DB table
+
+  const [showForm, setShowForm] = useState(false);
+  const [categories, setCategories] = useState(initialCategories);
+
   return (
     <>
-      <CategoryPanel />
-      <button onClick={createCategory}>New</button>
+      <CategoryPanel categories={categories}/>
+      { showForm && <NewCategoryForm handleVisibility={setShowForm} handleCategories={setCategories} currentCategories={categories}/> }
+      <button onClick={() => setShowForm(!showForm)}>New</button>
     </>
   );
 }
 
-function CategoryPanel() {
+function CategoryPanel(props) {
   return (
-    <div className="ExpenseCategory">
-      <table>
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {costs.map(c => (
-            <Category name={c.name} totalCost={c.cost} />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.categories.map(c => (
+          <Category key={c.name} name={c.name} totalCost={c.cost ?? " - "} />
+        ))}
+      </tbody>
+    </table>
   );
 }
 
