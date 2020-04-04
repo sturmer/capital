@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
+import { ExpenseDetail } from "./ExpenseDetail";
 
 const currency = "€";
 
@@ -43,11 +44,9 @@ const MonthHistoryPanel = () => {
 
   return (
     <>
+      <h1>Expenses</h1>
       <table>
         <thead>
-          <tr>
-            <th colSpan="2">Expenses month...</th>
-          </tr>
           <tr>
             <th>Date</th>
             <th>Amount</th>
@@ -85,20 +84,8 @@ const MonthHistoryPanel = () => {
       <button onClick={() => setShowForm(!showForm)}>Add line</button>
       {/* NOTE: `to` is the name of the route */}
       <Link to={"./categories"}>
-        <button variant="raised">Categories</button>
+        <button variant="raised">Go to Categories</button>
       </Link>
-    </>
-  );
-};
-
-const ExpenseDetail = props => {
-  return (
-    <>
-      <td>{props.date}</td>
-      <td>{props.amount}</td>
-      <td>{props.category}</td>
-      <td>{props.toFrom}</td>
-      <td>{props.description}</td>
     </>
   );
 };

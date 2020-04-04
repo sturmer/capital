@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Switch } from "react-router-dom";
 
 import "./App.css";
-import { CategoryPanel } from "./Category";
+import { CategoryPanel } from "./CategoryPanel";
 import { MonthHistoryPanel } from "./MonthHistoryPanel";
 
 const App = () => {
