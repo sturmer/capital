@@ -2,13 +2,13 @@ import React from "react";
 
 import "./App.css";
 import { CategoryPanel } from "./Category";
-import { MonthHistory } from "./MonthHistory";
+import { MonthHistoryPanel } from "./MonthHistoryPanel";
 
 const App = () => {
   return (
     <>
       <CategoryPanel />
-      <MonthHistory />
+      <MonthHistoryPanel />
     </>
   );
 };

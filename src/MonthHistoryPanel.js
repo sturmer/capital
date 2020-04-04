@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NewExpenseLineForm } from "./NewExpenseLineForm";
 
 const currency = "€";
 
@@ -29,19 +30,24 @@ const initialExpenses = [
   }
 ];
 
-const MonthHistory = () => {
+const MonthHistoryPanel = () => {
   // TODO init from DB
   const [expenses, setExpenses] = useState(initialExpenses);
+  const [showForm, setShowForm] = useState(false);
 
   return (
     <>
-      <div>Month</div>
       <table>
         <thead>
+          <tr>
+            <th colSpan="2">Expenses month...</th>
+          </tr>
+
           <tr>
             <th>Date</th>
             <th>Amount</th>
             <th>Category</th>
+            <th>To/From</th>
             <th>Description</th>
           </tr>
         </thead>
@@ -58,7 +64,15 @@ const MonthHistory = () => {
           ))}
         </tbody>
       </table>
-      <button>Add line</button>
+      {showForm && (
+        <NewExpenseLineForm
+          handleVisibility={setShowForm}
+          handleExpenses={setExpenses}
+          currentExpenses={expenses}
+        />
+      )}
+
+      <button onClick={() => setShowForm(!showForm)}>Add line</button>
     </>
   );
 };
@@ -75,4 +89,4 @@ const ExpenseDetail = props => {
   );
 };
 
-export { MonthHistory };
+export { MonthHistoryPanel };
