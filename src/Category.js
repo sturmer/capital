@@ -1,7 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
+import { NewCategoryForm } from "./NewCategoryForm";
 
-export function CategoryPanel(props) {
-    return (
+// TODO get categories from DB table
+const initialCategories = [
+  { name: "utilities", cost: 13.9 },
+  { name: "housing", cost: 21.4 },
+  { name: "foodDelivery", cost: 5.6 }
+];
+
+export function CategoryPanel() {
+  const [showForm, setShowForm] = useState(false);
+  const [categories, setCategories] = useState(initialCategories);
+
+  return (
+    <>
       <table>
         <thead>
           <tr>
@@ -10,19 +22,28 @@ export function CategoryPanel(props) {
           </tr>
         </thead>
         <tbody>
-          {props.categories.map(c => (
+          {categories.map(c => (
             <Category key={c.name} name={c.name} totalCost={c.cost ?? " - "} />
           ))}
         </tbody>
       </table>
-    );
-  }
-  
-  function Category(props) {
-    return (
-      <tr>
-        <td>{props.name}</td>
-        <td>{props.totalCost}</td>
-      </tr>
-    );
-  }
+      {showForm && (
+        <NewCategoryForm
+          handleVisibility={setShowForm}
+          handleCategories={setCategories}
+          currentCategories={categories}
+        />
+      )}
+      <button onClick={() => setShowForm(!showForm)}>New</button>
+    </>
+  );
+}
+
+function Category(props) {
+  return (
+    <tr>
+      <td>{props.name}</td>
+      <td>{props.totalCost}</td>
+    </tr>
+  );
+}
