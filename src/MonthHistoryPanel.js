@@ -35,6 +35,10 @@ const MonthHistoryPanel = () => {
   const [expenses, setExpenses] = useState(initialExpenses);
   const [showForm, setShowForm] = useState(false);
 
+  const deleteExpense = id => {
+    setExpenses(expenses.filter(exp => exp.id !== id));
+  };
+
   return (
     <>
       <table>
@@ -53,14 +57,18 @@ const MonthHistoryPanel = () => {
         </thead>
         <tbody>
           {expenses.map(e => (
-            <ExpenseDetail
-              key={e.id}
-              date={e.date}
-              amount={e.amount}
-              category={e.category}
-              toFrom={e.toFrom}
-              description={e.description}
-            />
+            <tr key={e.id}>
+              <ExpenseDetail
+                date={e.date}
+                amount={e.amount}
+                category={e.category}
+                toFrom={e.toFrom}
+                description={e.description}
+              />
+              <td>
+                <button onClick={() => deleteExpense(e.id)}>Delete</button>
+              </td>
+            </tr>
           ))}
         </tbody>
       </table>
@@ -80,13 +88,13 @@ const MonthHistoryPanel = () => {
 
 const ExpenseDetail = props => {
   return (
-    <tr>
+    <>
       <td>{props.date}</td>
       <td>{props.amount}</td>
       <td>{props.category}</td>
       <td>{props.toFrom}</td>
       <td>{props.description}</td>
-    </tr>
+    </>
   );
 };
 
