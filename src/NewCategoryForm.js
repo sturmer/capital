@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export function NewCategoryForm(props) {
+const NewCategoryForm = props => {
   const [categoryName, setCategoryName] = useState("");
 
   const handleCategoryChange = event => {
@@ -36,4 +36,6 @@ export function NewCategoryForm(props) {
       <button>Add</button>
     </form>
   );
-}
+};
+
+export { NewCategoryForm };

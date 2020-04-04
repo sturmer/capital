@@ -8,7 +8,7 @@ const initialCategories = [
   { name: "foodDelivery", cost: 5.6 }
 ];
 
-export function CategoryPanel() {
+const CategoryPanel = () => {
   const [showForm, setShowForm] = useState(false);
   const [categories, setCategories] = useState(initialCategories);
 
@@ -37,13 +37,15 @@ export function CategoryPanel() {
       <button onClick={() => setShowForm(!showForm)}>New</button>
     </>
   );
-}
+};
 
-function Category(props) {
+const Category = props => {
   return (
     <tr>
       <td>{props.name}</td>
       <td>{props.totalCost}</td>
     </tr>
   );
-}
+};
+
+export { CategoryPanel };
