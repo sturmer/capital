@@ -69,6 +69,7 @@ const MonthHistoryPanel = () => {
           handleVisibility={setShowForm}
           handleExpenses={setExpenses}
           currentExpenses={expenses}
+          currency={currency}
         />
       )}
 

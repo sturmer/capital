@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { v4 as uuidV4 } from "uuid";
 
 const NewExpenseLineForm = props => {
-  const [date, setDate] = useState("");
+  // TODO input validation!
+  const [date, setDate] = useState(`${new Date().toISOString().split("T")[0]}`);
   const [amount, setAmount] = useState("0");
   const [category, setCategory] = useState(""); // TODO need to check the category belongs to the existing ones
   const [toFrom, setToFrom] = useState("");
@@ -44,16 +45,27 @@ const NewExpenseLineForm = props => {
     // Hide form
     props.handleVisibility(false);
 
-    // add row with category
     addExpenseToHistory(date, amount, category, toFrom, description);
 
     event.preventDefault(); // crucial, or the whole page would be reloaded
   };
 
   const addExpenseToHistory = _event => {
+    const isExpense = amount[0] === "-";
     props.handleExpenses([
       ...props.currentExpenses,
-      { id: uuidV4(), date, amount, category, toFrom, description }
+      {
+        id: uuidV4(),
+        date,
+        amount: `${
+          isExpense
+            ? "-" + props.currency + amount.slice(1)
+            : props.currency + " " + amount
+        }`,
+        category,
+        toFrom,
+        description
+      }
     ]);
   };
 
