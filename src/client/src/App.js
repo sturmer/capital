@@ -1,4 +1,5 @@
 import React from "react";
+import { Route, Switch } from "react-router-dom";
 
 import "./App.css";
 import { CategoryPanel } from "./Category";
@@ -7,8 +8,10 @@ import { MonthHistoryPanel } from "./MonthHistoryPanel";
 const App = () => {
   return (
     <>
-      <CategoryPanel />
-      <MonthHistoryPanel />
+      <Switch>
+        <Route path="/categories" component={CategoryPanel} />
+        <Route path="/" component={MonthHistoryPanel} />
+      </Switch>
     </>
   );
 };

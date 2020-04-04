@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
 
 const currency = "€";
@@ -46,7 +48,6 @@ const MonthHistoryPanel = () => {
           <tr>
             <th colSpan="2">Expenses month...</th>
           </tr>
-
           <tr>
             <th>Date</th>
             <th>Amount</th>
@@ -82,6 +83,10 @@ const MonthHistoryPanel = () => {
       )}
 
       <button onClick={() => setShowForm(!showForm)}>Add line</button>
+      {/* NOTE: `to` is the name of the route */}
+      <Link to={"./categories"}>
+        <button variant="raised">Categories</button>
+      </Link>
     </>
   );
 };
