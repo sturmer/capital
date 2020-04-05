@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { v4 as uuidV4 } from "uuid";
 
-const NewExpenseLineForm = props => {
+const NewExpenseLineForm = (props) => {
   // TODO input validation!
   const [date, setDate] = useState(`${new Date().toISOString().split("T")[0]}`);
   const [amount, setAmount] = useState("0");
@@ -19,38 +19,40 @@ const NewExpenseLineForm = props => {
   //     handlers[propName](event.target.value);
   //   };
 
-  const handleDateChange = event => {
+  const handleDateChange = (event) => {
     // TODO format date
     setDate(event.target.value);
   };
 
-  const handleAmountChange = event => {
+  const handleAmountChange = (event) => {
     // format amount with currency
     setAmount(event.target.value);
   };
 
-  const handleCategoryChange = event => {
+  const handleCategoryChange = (event) => {
     setCategory(event.target.value);
   };
 
-  const handleToFromChange = event => {
+  const handleToFromChange = (event) => {
     setToFrom(event.target.value);
   };
 
-  const handleDescriptionChange = event => {
+  const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
   };
 
-  const handleLineSubmit = event => {
+  const handleLineSubmit = (event) => {
     // Hide form
     props.handleVisibility(false);
 
     addExpenseToHistory(date, amount, category, toFrom, description);
 
+    // TODO: Write expenses to file (use timer + save button?)
+
     event.preventDefault(); // crucial, or the whole page would be reloaded
   };
 
-  const addExpenseToHistory = _event => {
+  const addExpenseToHistory = (_event) => {
     const isExpense = amount[0] === "-";
     props.handleExpenses([
       ...props.currentExpenses,
@@ -64,8 +66,8 @@ const NewExpenseLineForm = props => {
         }`,
         category,
         toFrom,
-        description
-      }
+        description,
+      },
     ]);
   };
 

@@ -28,6 +28,7 @@ const MonthHistoryPanel = () => {
 
   const deleteExpense = (id) => {
     setExpenses(expenses.filter((exp) => exp.id !== id));
+    // TODO Write the changed expenses to file
   };
 
   return (
