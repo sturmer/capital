@@ -6,6 +6,7 @@ import { ExpenseDetail } from "./ExpenseDetail";
 
 const gConstants = require("./constants");
 
+// TODO Click on list item to edit it!
 const MonthHistoryPanel = () => {
   const [showForm, setShowForm] = useState(false);
   const [expenses, setExpenses] = useState([]);
