@@ -1,13 +1,14 @@
 import React from "react";
+import { Container, Row, Col } from "reactstrap";
 
-const ExpenseDetail = props => {
+const ExpenseDetail = (props) => {
   return (
     <>
-      <td>{props.date}</td>
-      <td>{props.amount}</td>
-      <td>{props.category}</td>
-      <td>{props.toFrom}</td>
-      <td>{props.description}</td>
+      <Col>{props.date}</Col>
+      <Col>{props.amount}</Col>
+      <Col>{props.category}</Col>
+      <Col>{props.toFrom}</Col>
+      <Col>{props.description}</Col>
     </>
   );
 };

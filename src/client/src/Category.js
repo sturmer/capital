@@ -1,10 +1,11 @@
 import React from "react";
+import { Col } from "reactstrap";
 
-const Category = props => {
+const Category = (props) => {
   return (
     <>
-      <td>{props.name}</td>
-      <td>{props.totalCost}</td>
+      <Col>{props.name}</Col>
+      <Col>{props.totalCost}</Col>
     </>
   );
 };

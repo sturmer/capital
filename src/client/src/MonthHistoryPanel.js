@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Container, Button, Row } from "reactstrap";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
 import { ExpenseDetail } from "./ExpenseDetail";
-import { Button, ListGroup, ListGroupItem } from "reactstrap";
 
-const currency = "€";
+const gConstants = require("./constants");
 
 const MonthHistoryPanel = () => {
   const [showForm, setShowForm] = useState(false);
@@ -33,41 +33,46 @@ const MonthHistoryPanel = () => {
   };
 
   return (
-    <>
-      <h1>Expenses</h1>
-      <ListGroup>
-        {expenses.map((e) => (
-          <ListGroupItem>
-            <ExpenseDetail
-              date={e.date}
-              amount={e.amount}
-              category={e.category}
-              toFrom={e.toFrom}
-              description={e.description}
-            />
-          </ListGroupItem>
-        ))}
-      </ListGroup>
-
-      {showForm && (
-        <NewExpenseLineForm
-          handleVisibility={setShowForm}
-          handleExpenses={setExpenses}
-          currentExpenses={expenses}
-          currency={currency}
-        />
-      )}
-
-      <Button color="primary" onClick={() => setShowForm(!showForm)}>
-        Add line
-      </Button>
-      {/* TODO Add cancel button (and/or use Esc to cancel) */}
-
-      {/* NOTE: `to`'s value is the name of the route */}
-      <Link to={"./categories"}>
-        <Button color="info">Go to Categories</Button>
-      </Link>
-    </>
+    <Container fluid="sm">
+      <h1>{gConstants.appname}</h1>
+      <h2>Expenses</h2>
+      {expenses.map((e) => (
+        <Row>
+          <ExpenseDetail
+            date={e.date}
+            amount={e.amount}
+            category={e.category}
+            toFrom={e.toFrom}
+            description={e.description}
+          />
+          <Button color="warning" onClick={() => deleteExpense(e.id)}>
+            Delete
+          </Button>
+        </Row>
+      ))}
+      <Row>
+        {showForm && (
+          <NewExpenseLineForm
+            handleVisibility={setShowForm}
+            handleExpenses={setExpenses}
+            currentExpenses={expenses}
+            currency={gConstants.currency}
+          />
+        )}
+      </Row>
+      <Row>
+        <Button color="primary" onClick={() => setShowForm(!showForm)}>
+          Add line
+        </Button>
+        {/* TODO Add cancel button (and/or use Esc to cancel) */}
+      </Row>
+      <Row>
+        {/* NOTE: `to`'s value is the name of the route */}
+        <Link to={"./categories"}>
+          <Button color="link">Go to Categories</Button>
+        </Link>
+      </Row>
+    </Container>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { v4 as uuidV4 } from "uuid";
+import { Button, Form, FormGroup, Label, Col, Input } from "reactstrap";
 
 const NewExpenseLineForm = (props) => {
   // TODO input validation!
@@ -72,49 +73,79 @@ const NewExpenseLineForm = (props) => {
   };
 
   return (
-    <form onSubmit={handleLineSubmit}>
-      <label htmlFor="expenseLineDate">Date</label>
-      <input
-        type="text"
-        name="expenseLineDate"
-        value={date}
-        onChange={handleDateChange}
-      ></input>
+    <Form onSubmit={handleLineSubmit}>
+      <FormGroup>
+        <Col sm={10}>
+          <Label for="expenseLineDate">Date</Label>
+        </Col>
+        <Col sm={10}>
+          <Input
+            type="text"
+            name="expenseLineDate"
+            value={date}
+            onChange={handleDateChange}
+          ></Input>
+        </Col>
+      </FormGroup>
 
-      <label htmlFor="expenseLineAmount">Amount</label>
-      <input
-        type="text"
-        name="expenseLineAmount"
-        value={amount}
-        onChange={handleAmountChange}
-      ></input>
+      <FormGroup>
+        <Col sm={10}>
+          <Label for="expenseLineAmount">Amount</Label>
+        </Col>
+        <Col sm={10}>
+          <Input
+            type="text"
+            name="expenseLineAmount"
+            value={amount}
+            onChange={handleAmountChange}
+          ></Input>
+        </Col>
+      </FormGroup>
 
-      <label htmlFor="expenseLineCategory">Category</label>
-      <input
-        type="text"
-        name="expenseLineCategory"
-        value={category}
-        onChange={handleCategoryChange}
-      ></input>
+      <FormGroup>
+        <Col sm={10}>
+          <Label for="expenseLineCategory">Category</Label>
+        </Col>
+        <Col sm={10}>
+          <Input
+            type="text"
+            name="expenseLineCategory"
+            value={category}
+            onChange={handleCategoryChange}
+          ></Input>
+        </Col>
+      </FormGroup>
 
-      <label htmlFor="expenseLineToFrom">To/From</label>
-      <input
-        type="text"
-        name="expenseLineToFrom"
-        value={toFrom}
-        onChange={handleToFromChange}
-      ></input>
+      <FormGroup>
+        <Col sm={10}>
+          <Label for="expenseLineToFrom">To/From</Label>
+        </Col>
+        <Col sm={10}>
+          <Input
+            type="text"
+            name="expenseLineToFrom"
+            value={toFrom}
+            onChange={handleToFromChange}
+          ></Input>
+        </Col>
+      </FormGroup>
 
-      <label htmlFor="expenseLineDescription">Description</label>
-      <input
-        type="text"
-        name="expenseLineDescription"
-        value={description}
-        onChange={handleDescriptionChange}
-      ></input>
+      <FormGroup>
+        <Col sm={10}>
+          <Label for="expenseLineDescription">Description</Label>
+        </Col>
+        <Col sm={10}>
+          <Input
+            type="text"
+            name="expenseLineDescription"
+            value={description}
+            onChange={handleDescriptionChange}
+          ></Input>
+        </Col>
+      </FormGroup>
 
-      <button>Add</button>
-    </form>
+      <Button color="secondary">Add</Button>
+    </Form>
   );
 };
 
