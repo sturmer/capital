@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { Button, Container, Row } from "reactstrap";
 
 import { NewCategoryForm } from "./NewCategoryForm";
 import { Category } from "./Category";
-
-const gConstants = require("./constants");
 
 // TODO get categories from DB table
 const initialCategories = [
@@ -24,7 +21,6 @@ const CategoryPanel = () => {
 
   return (
     <Container fluid="sm">
-      <h1>{gConstants.appname}</h1>
       <h2>Categories</h2>
 
       {categories.map((c) => (
@@ -50,12 +46,6 @@ const CategoryPanel = () => {
         <Button color="primary" onClick={() => setShowForm(!showForm)}>
           New
         </Button>
-      </Row>
-
-      <Row>
-        <Link to={"./"}>
-          <Button color="link">Go to Expenses</Button>
-        </Link>
       </Row>
     </Container>
   );

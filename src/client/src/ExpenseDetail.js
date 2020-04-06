@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Col } from "reactstrap";
+import { Col } from "reactstrap";
 
 const ExpenseDetail = (props) => {
   return (

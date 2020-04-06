@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Container, Button, Row } from "reactstrap";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
@@ -34,7 +33,6 @@ const MonthHistoryPanel = () => {
 
   return (
     <Container fluid="sm">
-      <h1>{gConstants.appname}</h1>
       <h2>Expenses</h2>
       {expenses.map((e) => (
         <Row>
@@ -65,12 +63,6 @@ const MonthHistoryPanel = () => {
           Add line
         </Button>
         {/* TODO Add cancel button (and/or use Esc to cancel) */}
-      </Row>
-      <Row>
-        {/* NOTE: `to`'s value is the name of the route */}
-        <Link to={"./categories"}>
-          <Button color="link">Go to Categories</Button>
-        </Link>
       </Row>
     </Container>
   );
