@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
 import { ExpenseDetail } from "./ExpenseDetail";
+import { Button, ListGroup, ListGroupItem } from "reactstrap";
 
 const currency = "€";
 
@@ -34,33 +35,20 @@ const MonthHistoryPanel = () => {
   return (
     <>
       <h1>Expenses</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Category</th>
-            <th>To/From</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {expenses.map((e) => (
-            <tr key={e.id}>
-              <ExpenseDetail
-                date={e.date}
-                amount={e.amount}
-                category={e.category}
-                toFrom={e.toFrom}
-                description={e.description}
-              />
-              <td>
-                <button onClick={() => deleteExpense(e.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ListGroup>
+        {expenses.map((e) => (
+          <ListGroupItem>
+            <ExpenseDetail
+              date={e.date}
+              amount={e.amount}
+              category={e.category}
+              toFrom={e.toFrom}
+              description={e.description}
+            />
+          </ListGroupItem>
+        ))}
+      </ListGroup>
+
       {showForm && (
         <NewExpenseLineForm
           handleVisibility={setShowForm}
@@ -70,10 +58,14 @@ const MonthHistoryPanel = () => {
         />
       )}
 
-      <button onClick={() => setShowForm(!showForm)}>Add line</button>
+      <Button color="primary" onClick={() => setShowForm(!showForm)}>
+        Add line
+      </Button>
+      {/* TODO Add cancel button (and/or use Esc to cancel) */}
+
       {/* NOTE: `to`'s value is the name of the route */}
       <Link to={"./categories"}>
-        <button variant="raised">Go to Categories</button>
+        <Button color="info">Go to Categories</Button>
       </Link>
     </>
   );

@@ -3,10 +3,6 @@ const path = require("path");
 
 const app = express();
 
-// TODO Use custom domain for Heroku app
-// TODO Decide on DB (or just files in the beginning?) and store data in it
-// TODO Put TODOs in one place...
-
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, "../client/build")));
 
