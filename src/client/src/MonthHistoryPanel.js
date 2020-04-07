@@ -15,6 +15,7 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    // TODO Use the equivalent of an enum instead of strings for types (actionType.fetchCategoriesReq)
     case "FETCH_EXPENSES_REQUEST":
       return {
         ...state,

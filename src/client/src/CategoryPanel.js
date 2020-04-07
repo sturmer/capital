@@ -5,6 +5,13 @@ import { Button, Container, Row } from "reactstrap";
 import { Category } from "./Category";
 import { AuthContext } from "./App";
 
+const actionTypes = {
+  fetchCategories: "FETCH_CATEGORIES_REQ",
+  fetchCategoriesSuccess: "FETCH_CATEGORIES_SUCCESS",
+  fetchCategoriesFailure: "FETCH_CATEGORIES_FAILURE",
+  deleteCategory: "DELETE_CATEGORY",
+};
+
 const initialState = {
   categories: [],
   hasError: false,
@@ -13,23 +20,31 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_CATEGORIES_REQ":
+    case actionTypes.fetchCategories:
       return {
         ...state,
         isFetching: true,
         hasError: false,
       };
-    case "FETCH_CATEGORIES_FAIL":
+    case actionTypes.fetchCategoriesFailure:
       return {
         ...state,
         isFetching: false,
         hasError: true,
       };
-    case "FETCH_CATEGORIES_SUCCESS":
+    case actionTypes.fetchCategoriesSuccess:
       return {
         ...state,
         isFetching: false,
         categories: action.payload,
+      };
+
+    case actionTypes.deleteCategory:
+      // NOTE: If I put `categories` first, then `...state`, the categories
+      // property will be overridden by the current state!
+      return {
+        ...state,
+        categories: state.categories.filter((c) => c.id !== action.payload),
       };
     default:
       return state;
@@ -39,13 +54,12 @@ const reducer = (state, action) => {
 const CategoryPanel = () => {
   const { state: authState } = useContext(AuthContext);
   const [showForm, setShowForm] = useState(false);
-  // const [categories, setCategories] = useState([]);
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // Fetch categories from server
   useEffect(() => {
-    dispatch({ type: "FETCH_CATEGORIES_REQ" });
+    dispatch({ type: actionTypes.fetchCategories });
 
     fetch("/categories", {
       headers: { Authorization: `Bearer ${authState.token}` },
@@ -58,17 +72,21 @@ const CategoryPanel = () => {
       })
       .then((resJson) => {
         console.log({ resJson });
-        dispatch({ type: "FETCH_CATEGORIES_SUCCESS", payload: resJson });
+        dispatch({
+          type: actionTypes.fetchCategoriesSuccess,
+          payload: resJson,
+        });
       })
       .catch((err) => {
         console.log(err);
-        dispatch({ type: "FETCH_CATEGORIES_FAIL" });
+        dispatch({ type: actionTypes.fetchCategoriesFailure });
       });
   }, [authState.token]);
 
   const deleteCategory = (id) => {
     // setCategories(categories.filter((c) => c.id !== id));
     // TODO Write updated list of categories to file
+    dispatch({ type: actionTypes.deleteCategory, payload: id });
   };
 
   return (
