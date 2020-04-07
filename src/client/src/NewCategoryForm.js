@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-const NewCategoryForm = props => {
+const NewCategoryForm = (props) => {
   const [categoryName, setCategoryName] = useState("");
 
-  const handleCategoryChange = event => {
+  const handleCategoryChange = (event) => {
     setCategoryName(event.target.value);
   };
 
-  const handleCategorySubmit = event => {
+  const handleCategorySubmit = (event) => {
     // Hide form
     props.handleVisibility(false);
 
@@ -17,13 +17,14 @@ const NewCategoryForm = props => {
     event.preventDefault(); // crucial, or the whole page would be reloaded
   };
 
-  const addCategory = _event => {
+  const addCategory = (_event) => {
     props.handleCategories([
       ...props.currentCategories,
-      { name: categoryName, value: null }
+      { name: categoryName, value: null },
     ]);
   };
 
+  // TODO Make this a Bootstrap form
   return (
     <form onSubmit={handleCategorySubmit}>
       <label htmlFor="categoryName">Category Name</label>

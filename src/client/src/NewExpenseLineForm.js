@@ -11,14 +11,7 @@ const NewExpenseLineForm = (props) => {
   const [description, setDescription] = useState("");
 
   // TODO refactor and don't repeat handleXXX = event => setXXX(event.target.value)
-  //   const handlers = {
-  //     date: setDate,
-  //     amount: setAmount
-  //   };
-
-  //   const handle = (propName, event) => {
-  //     handlers[propName](event.target.value);
-  //   };
+  // See LoginForm for a smart solution
 
   const handleDateChange = (event) => {
     // TODO format date

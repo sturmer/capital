@@ -31,14 +31,15 @@ const CategoryPanel = () => {
     <Container fluid="sm">
       <h2>Categories</h2>
 
-      {categories.map((c) => (
-        <Row>
-          <Category name={c.name} totalCost={c.cost ?? " - "} />
-          <Button color="warning" onClick={() => deleteCategory(c.id)}>
-            Remove
-          </Button>
-        </Row>
-      ))}
+      {categories &&
+        categories.map((c) => (
+          <Row key={c.id}>
+            <Category name={c.name} />
+            <Button color="warning" onClick={() => deleteCategory(c.id)}>
+              Remove
+            </Button>
+          </Row>
+        ))}
 
       <Row>
         {showForm && (
@@ -52,7 +53,7 @@ const CategoryPanel = () => {
 
       <Row>
         <Button color="primary" onClick={() => setShowForm(!showForm)}>
-          New
+          New Category
         </Button>
       </Row>
     </Container>

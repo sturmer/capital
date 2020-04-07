@@ -1,7 +1,7 @@
 {
   "categories": [
-    { "id": 1, "name": "utilities", "cost": 13.9 },
-    { "id": 2, "name": "housing", "cost": 21.4 },
-    { "id": 3, "name": "foodDelivery", "cost": 5.6 }
+    { "id": 1, "name": "utilities" },
+    { "id": 2, "name": "housing" },
+    { "id": 3, "name": "foodDelivery" }
   ]
 }
