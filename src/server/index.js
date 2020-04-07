@@ -1,9 +1,11 @@
 const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
+
 const config = require("./config/index");
-const expenses = require("./models/Expense");
 const middleware = require("./middlewares/authMiddleware");
+const expenses = require("./models/Expense");
+const categories = require("./models/Category");
 
 const app = express();
 app.use(express.json());
@@ -16,9 +18,7 @@ app.get("/expenses", middleware.checkToken, (req, res) => {
 });
 
 app.get("/categories", middleware.checkToken, (req, res) => {
-  // TODO use models/Category (see /expenses)
-  const storedCategories = require("../data/categories.json");
-  res.json(storedCategories);
+  res.json(categories);
 });
 
 app.post("/login", (req, res) => {
