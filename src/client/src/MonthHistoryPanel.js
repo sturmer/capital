@@ -7,6 +7,13 @@ import { AuthContext } from "./App";
 
 // const gConstants = require("./constants");
 
+const actionTypes = {
+  fetchExpenses: "FETCH_EXPENSES_REQUEST",
+  fetchExpensesSuccess: "FETCH_EXPENSES_SUCCESS",
+  fetchExpensesFail: "FETCH_EXPENSES_FAILURE",
+  deleteExpense: "DELETE_EXPENSE",
+};
+
 const initialState = {
   expenses: [],
   isFetching: false,
@@ -16,23 +23,28 @@ const initialState = {
 const reducer = (state, action) => {
   switch (action.type) {
     // TODO Use the equivalent of an enum instead of strings for types (actionType.fetchCategoriesReq)
-    case "FETCH_EXPENSES_REQUEST":
+    case actionTypes.fetchExpenses:
       return {
         ...state,
         isFetching: true,
         hasError: false,
       };
-    case "FETCH_EXPENSES_SUCCESS":
+    case actionTypes.fetchExpensesSuccess:
       return {
         ...state,
         isFetching: false,
         expenses: action.payload,
       };
-    case "FETCH_EXPENSES_FAILURE":
+    case actionTypes.fetchExpensesFail:
       return {
         ...state,
         hasError: true,
         isFetching: false,
+      };
+    case actionTypes.deleteExpense:
+      return {
+        ...state,
+        expenses: state.expenses.filter((e) => e.id !== action.payload),
       };
     default:
       return state;
@@ -46,7 +58,7 @@ const MonthHistoryPanel = () => {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    dispatch({ type: "FETCH_EXPENSES_REQUEST" });
+    dispatch({ type: actionTypes.fetchExpenses });
 
     fetch("/expenses", {
       headers: { Authorization: `Bearer ${authState.token}` },
@@ -61,19 +73,19 @@ const MonthHistoryPanel = () => {
       .then((resJson) => {
         console.log(resJson);
         dispatch({
-          type: "FETCH_EXPENSES_SUCCESS",
+          type: actionTypes.fetchExpensesSuccess,
           payload: resJson,
         });
       })
       .catch((error) => {
         console.log(error);
-        dispatch({ type: "FETCH_EXPENSES_FAILURE" });
+        dispatch({ type: actionTypes.fetchExpensesFail });
       });
   }, [authState.token]);
 
   const deleteExpense = (id) => {
-    state.expenses = state.expenses.filter((exp) => exp.id !== id);
     // TODO Write the changed expenses to file
+    dispatch({ type: actionTypes.deleteExpense, payload: id });
   };
 
   return (

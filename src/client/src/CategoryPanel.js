@@ -84,7 +84,6 @@ const CategoryPanel = () => {
   }, [authState.token]);
 
   const deleteCategory = (id) => {
-    // setCategories(categories.filter((c) => c.id !== id));
     // TODO Write updated list of categories to file
     dispatch({ type: actionTypes.deleteCategory, payload: id });
   };
