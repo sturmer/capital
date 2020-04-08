@@ -114,9 +114,8 @@ const CategoryPanel = () => {
         {showForm && (
           <NewCategoryForm
             handleVisibility={setShowForm}
+            addCategoryType={actionTypes.addCategory}
             dispatch={dispatch}
-            // handleCategories={setCategories}
-            // currentCategories={categories}
           />
         )}
       </Row>
