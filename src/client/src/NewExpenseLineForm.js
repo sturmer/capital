@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { v4 as uuidV4 } from "uuid";
 import { Button, Form, FormGroup, Label, Col, Input } from "reactstrap";
 
+import { currency } from "./constants";
+
 const NewExpenseLineForm = (props) => {
   // TODO input validation!
 
@@ -38,33 +40,27 @@ const NewExpenseLineForm = (props) => {
   };
 
   const handleLineSubmit = (event) => {
+    event.preventDefault();
+
+    // FIXME brittle.
+    const isExpense = amount[0] === "-";
+
     // Hide form
     props.handleVisibility(false);
 
-    addExpenseToHistory(date, amount, category, toFrom, description);
+    const newLine = {
+      id: uuidV4(),
+      date,
+      amount: `${
+        isExpense ? "-" + currency + amount.slice(1) : currency + " " + amount
+      }`,
+      category,
+      toFrom,
+      description,
+    };
+    props.dispatch({ type: props.actionType, payload: newLine });
 
     // TODO: Write expenses to file (use timer + save button?)
-
-    event.preventDefault(); // crucial, or the whole page would be reloaded
-  };
-
-  const addExpenseToHistory = (_event) => {
-    const isExpense = amount[0] === "-";
-    props.handleExpenses([
-      ...props.currentExpenses,
-      {
-        id: uuidV4(),
-        date,
-        amount: `${
-          isExpense
-            ? "-" + props.currency + amount.slice(1)
-            : props.currency + " " + amount
-        }`,
-        category,
-        toFrom,
-        description,
-      },
-    ]);
   };
 
   return (
@@ -72,8 +68,6 @@ const NewExpenseLineForm = (props) => {
       <FormGroup>
         <Col sm={10}>
           <Label for="expenseLineDate">Date</Label>
-        </Col>
-        <Col sm={10}>
           <Input
             type="text"
             name="expenseLineDate"
@@ -86,8 +80,6 @@ const NewExpenseLineForm = (props) => {
       <FormGroup>
         <Col sm={10}>
           <Label for="expenseLineAmount">Amount</Label>
-        </Col>
-        <Col sm={10}>
           <Input
             type="text"
             name="expenseLineAmount"
@@ -100,8 +92,6 @@ const NewExpenseLineForm = (props) => {
       <FormGroup>
         <Col sm={10}>
           <Label for="expenseLineCategory">Category</Label>
-        </Col>
-        <Col sm={10}>
           <Input
             type="text"
             name="expenseLineCategory"

@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useContext, useReducer } from "react";
 import { Card, CardText, Container, Button, Row } from "reactstrap";
 
-// import { NewExpenseLineForm } from "./NewExpenseLineForm";
+import { NewExpenseLineForm } from "./NewExpenseLineForm";
 import { ExpenseDetail } from "./ExpenseDetail";
 import { AuthContext } from "./App";
-
-// const gConstants = require("./constants");
 
 const actionTypes = {
   fetchExpenses: "FETCH_EXPENSES_REQUEST",
   fetchExpensesSuccess: "FETCH_EXPENSES_SUCCESS",
   fetchExpensesFail: "FETCH_EXPENSES_FAILURE",
   deleteExpense: "DELETE_EXPENSE",
+  addExpense: "ADD_EXPENSE",
 };
 
 const initialState = {
@@ -45,6 +44,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         expenses: state.expenses.filter((e) => e.id !== action.payload),
+      };
+    case actionTypes.addExpense:
+      return {
+        ...state,
+        expenses: [...state.expenses, action.payload],
       };
     default:
       return state;
@@ -117,17 +121,16 @@ const MonthHistoryPanel = () => {
               </Row>
             ))}
 
-          {/* FIXME */}
-          {/* <Row>
+          <Row>
             {showForm && (
               <NewExpenseLineForm
                 handleVisibility={setShowForm}
-                handleExpenses={setExpenses}
-                currentExpenses={expenses}
-                currency={gConstants.currency}
+                dispatch={dispatch}
+                actionType={actionTypes.addExpense}
               />
             )}
-          </Row> */}
+          </Row>
+
           <Row>
             <Button color="primary" onClick={() => setShowForm(!showForm)}>
               New Expense
