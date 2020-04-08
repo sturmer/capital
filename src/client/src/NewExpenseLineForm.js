@@ -4,6 +4,8 @@ import { Button, Form, FormGroup, Label, Col, Input } from "reactstrap";
 
 const NewExpenseLineForm = (props) => {
   // TODO input validation!
+
+  // TODO Use reducer to manage state uniformly
   const [date, setDate] = useState(`${new Date().toISOString().split("T")[0]}`);
   const [amount, setAmount] = useState("0");
   const [category, setCategory] = useState(""); // TODO need to check the category belongs to the existing ones

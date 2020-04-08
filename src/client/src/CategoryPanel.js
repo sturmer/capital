@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useReducer } from "react";
 import { Button, Container, Row } from "reactstrap";
 
-// import { NewCategoryForm } from "./NewCategoryForm";
+import { NewCategoryForm } from "./NewCategoryForm";
 import { Category } from "./Category";
 import { AuthContext } from "./App";
 
@@ -10,6 +10,7 @@ const actionTypes = {
   fetchCategoriesSuccess: "FETCH_CATEGORIES_SUCCESS",
   fetchCategoriesFailure: "FETCH_CATEGORIES_FAILURE",
   deleteCategory: "DELETE_CATEGORY",
+  addCategory: "ADD_CATEGORY",
 };
 
 const initialState = {
@@ -46,6 +47,13 @@ const reducer = (state, action) => {
         ...state,
         categories: state.categories.filter((c) => c.id !== action.payload),
       };
+
+    case actionTypes.addCategory:
+      return {
+        ...state,
+        categories: [...state.categories, action.payload],
+      };
+
     default:
       return state;
   }
@@ -102,16 +110,16 @@ const CategoryPanel = () => {
           </Row>
         ))}
 
-      {/* FIXME */}
-      {/* <Row>
+      <Row>
         {showForm && (
           <NewCategoryForm
             handleVisibility={setShowForm}
-            handleCategories={setCategories}
-            currentCategories={categories}
+            dispatch={dispatch}
+            // handleCategories={setCategories}
+            // currentCategories={categories}
           />
         )}
-      </Row> */}
+      </Row>
 
       <Row>
         <Button color="primary" onClick={() => setShowForm(!showForm)}>
