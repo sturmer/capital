@@ -13,7 +13,7 @@ const NewCategoryForm = (props) => {
     // Hide form
     props.handleVisibility(false);
 
-    props.dispatch({
+    props.store.dispatch({
       type: props.addCategoryType,
       payload: { id: uuidV4(), name: categoryName },
     });

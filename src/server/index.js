@@ -21,6 +21,10 @@ app.get("/categories", middleware.checkToken, (req, res) => {
   res.json(categories);
 });
 
+app.post("/logout", (req, res) => {
+  res.json();
+});
+
 app.post("/login", (req, res) => {
   // TODO Search in DB/filesystem
   const mockedUsername = "gc";

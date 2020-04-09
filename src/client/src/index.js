@@ -1,18 +1,19 @@
+// TODO rename to app.js
+// TODO npm eject!
 import React from "react";
 import { render } from "react-dom";
-import "./index.css";
-import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
 
 import "bootstrap/dist/css/bootstrap.css";
 
+import { store } from "./store";
+import { router } from "./router";
+import "./index.css";
+
+// TODO App.js no longer used, just delete?
 render(
-  <BrowserRouter>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </BrowserRouter>,
+  <Provider store={store}>{router}</Provider>,
   document.getElementById("root")
 );
 

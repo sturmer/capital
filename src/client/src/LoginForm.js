@@ -10,7 +10,7 @@ import {
   Label,
 } from "reactstrap";
 
-import { AuthContext } from "./App";
+// import { AuthContext } from "./App";
 
 const LoginForm = () => {
   const initialState = {
@@ -21,7 +21,7 @@ const LoginForm = () => {
   };
   const [data, setData] = useState(initialState);
 
-  const { dispatch } = React.useContext(AuthContext);
+  // const { dispatch } = React.useContext(AuthContext);
 
   const handleUserLogin = (event) => {
     event.preventDefault();
@@ -53,7 +53,7 @@ const LoginForm = () => {
       })
       .then((resJson) => {
         console.log({ resJson });
-        dispatch({
+        store.dispatch({
           type: "LOGIN",
           payload: resJson,
         });
