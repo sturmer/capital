@@ -10,57 +10,63 @@ import {
   Label,
 } from "reactstrap";
 
-import { AuthContext } from "./App";
-
-const LoginForm = () => {
+const LoginForm = (props) => {
   const initialState = {
     email: "",
     password: "",
     isSubmitting: false,
     errorMessage: null,
   };
-  const [data, setData] = useState(initialState);
-
-  const { dispatch } = React.useContext(AuthContext);
+  const [formData, setFormData] = useState(initialState);
 
   const handleUserLogin = (event) => {
     event.preventDefault();
 
-    setData({
-      ...data,
+    setFormData({
+      ...formData,
       isSubmitting: true,
       errorMessage: null,
     });
 
+    // Call server API
     fetch("/login", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: data.email,
-        password: data.password,
+        username: formData.email,
+        password: formData.password,
       }),
     })
       .then((res) => {
         console.log({ res });
         if (res.ok) {
-          console.log("Result OK");
           return res.json();
         }
-        console.log("Uh-oh");
+        console.log("Error when calling /login API, throwing...");
         throw res;
       })
       .then((resJson) => {
         console.log({ resJson });
-        dispatch({
-          type: "LOGIN",
-          payload: resJson,
+
+        // Update authentication data
+        props.setAuthState({
+          isAuthenticated: true,
+          user: resJson.user,
+          token: resJson.token,
+        });
+
+        // Update login form
+        setFormData({
+          ...formData,
+          isSubmitting: false,
+          errorMessage: null,
         });
       })
       .catch((error) => {
-        setData({
-          ...data,
+        setFormData({
+          ...formData,
           isSubmitting: false,
           errorMessage: error.message || error.statusText,
         });
@@ -68,8 +74,8 @@ const LoginForm = () => {
   };
 
   const handleInputChange = (event) => {
-    setData({
-      ...data,
+    setFormData({
+      ...formData,
       [event.target.name]: event.target.value,
     });
   };
@@ -89,7 +95,7 @@ const LoginForm = () => {
               <Input
                 type="text"
                 name="email"
-                value={data.email}
+                value={formData.email}
                 onChange={handleInputChange}
               ></Input>
             </Col>
@@ -103,19 +109,19 @@ const LoginForm = () => {
               <Input
                 type="password"
                 name="password"
-                value={data.password}
+                value={formData.password}
                 onChange={handleInputChange}
               ></Input>
             </Col>
           </FormGroup>
 
-          {data.errorMessage && (
-            <span className="form-error">{data.errorMessage}</span>
+          {formData.errorMessage && (
+            <span className="form-error">{formData.errorMessage}</span>
           )}
 
           <Col sm={10}>
-            <Button color="primary" disabled={data.isSubmitting}>
-              {data.isSubmitting ? "Loading..." : "Login"}
+            <Button color="primary" disabled={formData.isSubmitting}>
+              {formData.isSubmitting ? "Loading..." : "Login"}
             </Button>
           </Col>
         </Form>

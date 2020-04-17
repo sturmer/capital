@@ -2,9 +2,9 @@ import React from "react";
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from "reactstrap";
 import { Link } from "react-router-dom";
 
-const gConstants = require("./constants");
+const gConstants = require("../../constants");
 
-const Navigation = () => {
+const Navigation = (props) => {
   return (
     <div>
       <Navbar color="faded" light expand="md">
@@ -23,6 +23,10 @@ const Navigation = () => {
               Categories
             </NavLink>
           </NavItem>
+          {/* Add "User: name" if logged in, and a logout button */}
+          {props.isAuthenticated ? (
+            <NavItem>Hi, {props.user.firstName}</NavItem>
+          ) : null}
         </Nav>
       </Navbar>
     </div>

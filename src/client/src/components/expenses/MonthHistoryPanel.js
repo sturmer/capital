@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext, useReducer } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { Card, CardText, Container, Button, Row } from "reactstrap";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
 import { ExpenseDetail } from "./ExpenseDetail";
-import { AuthContext } from "./App";
 
 const actionTypes = {
   fetchExpenses: "FETCH_EXPENSES_REQUEST",
@@ -56,8 +55,8 @@ const reducer = (state, action) => {
 };
 
 // TODO Click on list item to edit it!
-const MonthHistoryPanel = () => {
-  const { state: authState } = useContext(AuthContext);
+const MonthHistoryPanel = (props) => {
+  // const { state: authState } = useContext(AuthContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [showForm, setShowForm] = useState(false);
 
@@ -65,7 +64,7 @@ const MonthHistoryPanel = () => {
     dispatch({ type: actionTypes.fetchExpenses });
 
     fetch("/expenses", {
-      headers: { Authorization: `Bearer ${authState.token}` },
+      headers: { Authorization: `Bearer ${props.authToken}` },
     })
       .then((res) => {
         if (res.ok) {
@@ -85,7 +84,7 @@ const MonthHistoryPanel = () => {
         console.log(error);
         dispatch({ type: actionTypes.fetchExpensesFail });
       });
-  }, [authState.token]);
+  }, [props.authToken]);
 
   const deleteExpense = (id) => {
     // TODO Write the changed expenses to file

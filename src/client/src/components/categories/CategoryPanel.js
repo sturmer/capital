@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext, useReducer } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { Button, Container, Row } from "reactstrap";
 
 import { NewCategoryForm } from "./NewCategoryForm";
 import { Category } from "./Category";
-import { AuthContext } from "./App";
 
 const actionTypes = {
   fetchCategories: "FETCH_CATEGORIES_REQ",
@@ -19,6 +18,7 @@ const initialState = {
   isFetching: false,
 };
 
+// TODO Remove reducer shit
 const reducer = (state, action) => {
   switch (action.type) {
     case actionTypes.fetchCategories:
@@ -59,8 +59,7 @@ const reducer = (state, action) => {
   }
 };
 
-const CategoryPanel = () => {
-  const { state: authState } = useContext(AuthContext);
+const CategoryPanel = (props) => {
   const [showForm, setShowForm] = useState(false);
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -70,13 +69,14 @@ const CategoryPanel = () => {
     dispatch({ type: actionTypes.fetchCategories });
 
     fetch("/categories", {
-      headers: { Authorization: `Bearer ${authState.token}` },
+      headers: { Authorization: `Bearer ${props.authToken}` },
     })
       .then((res) => {
         if (res.ok) {
           return res.json();
+        } else {
+          throw res;
         }
-        throw res;
       })
       .then((resJson) => {
         console.log({ resJson });
@@ -89,18 +89,21 @@ const CategoryPanel = () => {
         console.log(err);
         dispatch({ type: actionTypes.fetchCategoriesFailure });
       });
-  }, [authState.token]);
+  }, [props.authToken]);
 
   const deleteCategory = (id) => {
     // TODO Write updated list of categories to file
     dispatch({ type: actionTypes.deleteCategory, payload: id });
   };
 
+  console.log({ state: JSON.stringify(state) });
+
   return (
     <Container fluid="sm">
       <h2>Categories</h2>
 
-      {state.categories &&
+      {state &&
+        state.categories &&
         state.categories.map((c) => (
           <Row key={c.id}>
             <Category name={c.name} />

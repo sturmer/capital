@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { v4 as uuidV4 } from "uuid";
 import { Button, Form, FormGroup, Label, Col, Input } from "reactstrap";
 
-import { currency } from "./constants";
+import { currency } from "../../constants";
 
 const NewExpenseLineForm = (props) => {
   // TODO input validation!
