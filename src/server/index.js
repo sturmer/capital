@@ -28,6 +28,8 @@ app.post("/login", (req, res) => {
   const username = req.body.username;
   const userPassword = req.body.password;
 
+  console.log({ body: req.body });
+
   if (username && userPassword) {
     if (username === mockedUsername && userPassword === mockedPassword) {
       const token = jwt.sign({ username }, config.secret, {

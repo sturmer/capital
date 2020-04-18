@@ -9,79 +9,50 @@ import {
   Input,
   Label,
 } from "reactstrap";
+import { useHistory } from "react-router-dom";
 
 const LoginForm = (props) => {
-  const initialState = {
-    email: "",
-    password: "",
-    isSubmitting: false,
-    errorMessage: null,
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const history = useHistory();
+
+  const handleInputChange = (event) => {
+    const { value, name } = event.target;
+    // console.log({ name, value });
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
-  const [formData, setFormData] = useState(initialState);
 
   const handleUserLogin = (event) => {
     event.preventDefault();
 
-    setFormData({
-      ...formData,
-      isSubmitting: true,
-      errorMessage: null,
-    });
+    console.log("posting...", JSON.stringify(formData));
 
-    // Call server API
     fetch("/login", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      method: "POST",
       body: JSON.stringify({
         username: formData.email,
         password: formData.password,
       }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then((res) => {
-        console.log({ res });
-        if (res.ok) {
-          return res.json();
+        if (res.status === 200) {
+          console.log("Logged in");
+          props.setAuthState({ ...props.state, isAuthenticated: true });
+          history.replace("/"); // Redirect to home
+        } else {
+          throw new Error(res.error);
         }
-        console.log("Error when calling /login API, throwing...");
-        throw res;
       })
-      .then((resJson) => {
-        console.log({ resJson });
-
-        // Update authentication data
-        props.setAuthState({
-          isAuthenticated: true,
-          user: resJson.user,
-          token: resJson.token,
-        });
-
-        // Update login form
-        setFormData({
-          ...formData,
-          isSubmitting: false,
-          errorMessage: null,
-        });
-      })
-      .catch((error) => {
-        setFormData({
-          ...formData,
-          isSubmitting: false,
-          errorMessage: error.message || error.statusText,
-        });
+      .catch((err) => {
+        console.error(err);
+        alert("Error logging in please try again");
       });
   };
-
-  const handleInputChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  // NOTE: The expenses and the categories are PER-USER.
-  // TODO Introduce multi-user
 
   return (
     <Container>
@@ -97,6 +68,7 @@ const LoginForm = (props) => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
+                required
               ></Input>
             </Col>
           </FormGroup>
@@ -111,17 +83,16 @@ const LoginForm = (props) => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
+                required
               ></Input>
             </Col>
           </FormGroup>
 
-          {formData.errorMessage && (
-            <span className="form-error">{formData.errorMessage}</span>
-          )}
-
           <Col sm={10}>
-            <Button color="primary" disabled={formData.isSubmitting}>
-              {formData.isSubmitting ? "Loading..." : "Login"}
+            {/* <Button color="primary" disabled={formData?.loading ?? false}> */}
+            <Button color="primary">
+              {/* TODO change the isAuthenticated state with the result*/}
+              Log In
             </Button>
           </Col>
         </Form>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Route, Switch } from "react-router-dom";
 
 import "./App.css";
@@ -6,6 +6,7 @@ import { CategoryPanel } from "./categories/CategoryPanel";
 import { MonthHistoryPanel } from "./expenses/MonthHistoryPanel";
 import { Navigation } from "./common/Navigation";
 import { LoginForm } from "./login/LoginForm";
+import { ProtectedRoute } from "./common/ProtectedRoute";
 
 // TODO Use custom domain for Heroku app
 // TODO Decide on DB (or just files in the beginning?) and store data in it -- keep using files as long as possible.
@@ -17,28 +18,26 @@ const initialState = {
 };
 
 const App = () => {
-  const [state, setState] = React.useState(initialState);
+  const [state, setState] = useState(initialState); // works?
 
   return (
     <div>
       <Navigation isAuthenticated={state.isAuthenticated} user={state.user} />
 
-      {!state.isAuthenticated ? (
-        <LoginForm authState={state} setAuthState={setState} />
-      ) : (
-        <Switch>
-          {/* TODO make path '/' point to /expenses */}
-          <Route
-            exact
-            path="/"
-            render={() => <MonthHistoryPanel authToken={state.token} />}
-          />
-          <Route
-            path="/categories"
-            render={() => <CategoryPanel authToken={state.token} />}
-          />
-        </Switch>
-      )}
+      <Switch>
+        {/* TODO make path '/' point to /expenses */}
+        <ProtectedRoute exact path="/" authState={state}>
+          <MonthHistoryPanel />
+        </ProtectedRoute>
+
+        <ProtectedRoute path="/categories" authState={state}>
+          <CategoryPanel />
+        </ProtectedRoute>
+        <Route
+          path="/login"
+          render={() => <LoginForm authState={state} setAuthState={setState} />}
+        />
+      </Switch>
     </div>
   );
 };
