@@ -23,7 +23,7 @@ const Navigation = () => {
               Categories
             </NavLink>
           </NavItem>
-          {/* Add "User: name" if logged in, and a logout button */}
+          {/* TODO Add "User: name" if logged in, and a logout button */}
           {/* {props.isAuthenticated ? (
             <div>
               <NavItem>
