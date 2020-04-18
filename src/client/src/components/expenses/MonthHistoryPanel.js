@@ -61,9 +61,7 @@ const MonthHistoryPanel = (props) => {
   useEffect(() => {
     dispatch({ type: actionTypes.fetchExpenses });
 
-    console.log({ Authorization: `Bearer ${props.authToken}` });
-
-    fetch("/expenses", {
+    fetch(`/expenses/${props.authUser}`, {
       headers: { Authorization: `Bearer ${props.authToken}` },
     })
       .then((res) => {
@@ -74,7 +72,7 @@ const MonthHistoryPanel = (props) => {
         }
       })
       .then((resJson) => {
-        console.log(resJson);
+        // console.log(resJson);
         dispatch({
           type: actionTypes.fetchExpensesSuccess,
           payload: resJson,
@@ -84,7 +82,7 @@ const MonthHistoryPanel = (props) => {
         console.log(error);
         dispatch({ type: actionTypes.fetchExpensesFail });
       });
-  }, [props.authToken]);
+  }, [props.authUser, props.authToken]);
 
   const deleteExpense = (id) => {
     // TODO Write the changed expenses to file

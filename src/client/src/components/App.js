@@ -18,9 +18,9 @@ const initialState = {
 };
 
 const App = () => {
-  const [state, setState] = useState(initialState); // works?
+  const [state, setState] = useState(initialState);
 
-  console.log({ state });
+  // console.log({ state });
 
   return (
     <div>
@@ -29,7 +29,7 @@ const App = () => {
       <Switch>
         {/* TODO make path '/' point to /expenses */}
         <ProtectedRoute exact path="/" authState={state}>
-          <MonthHistoryPanel authToken={state.token} />
+          <MonthHistoryPanel authUser={state.user} authToken={state.token} />
         </ProtectedRoute>
 
         <ProtectedRoute path="/categories" authState={state}>

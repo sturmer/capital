@@ -13,9 +13,12 @@ app.use(express.json());
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, "../client/build")));
 
-app.get("/expenses", middleware.checkToken, (req, res) => {
-  // console.log("retrieving expenses from DB...");
-  res.json(expenses);
+app.get("/expenses/:user", middleware.checkToken, (req, res) => {
+  // console.log("retrieving expenses from DB...", {
+  //   user: req.params.user,
+  //   expenses: expenses[req.params.user],
+  // });
+  res.json(expenses[req.params.user]);
 });
 
 app.get("/categories", middleware.checkToken, (req, res) => {
@@ -26,11 +29,19 @@ app.post("/login", (req, res) => {
   // TODO Search in DB/filesystem
   const mockedUsername = "gc";
   const mockedPassword = "n";
+  const mockedUsername2 = "k";
+  const mockedPassword2 = "n";
+
   const username = req.body.username;
   const userPassword = req.body.password;
 
+  // console.log({ username, userPassword });
+
   if (username && userPassword) {
-    if (username === mockedUsername && userPassword === mockedPassword) {
+    if (
+      (username === mockedUsername && userPassword === mockedPassword) ||
+      (username === mockedUsername2 && userPassword === mockedPassword2)
+    ) {
       const token = jwt.sign({ username }, config.secret, {
         expiresIn: "24h", // expires in 24 hours
       });

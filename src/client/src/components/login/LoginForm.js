@@ -53,6 +53,7 @@ const LoginForm = (props) => {
           ...props.authState,
           isAuthenticated: true,
           token: resJson.token,
+          user: formData.email,
         });
         history.replace("/"); // Redirect to home
       })
