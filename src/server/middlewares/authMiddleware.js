@@ -17,6 +17,7 @@ const checkToken = (req, res, next) => {
   }
 
   if (token) {
+    console.log({ middleware: "authMiddleware", token, secret: config.secret });
     jwt.verify(token, config.secret, (err, decoded) => {
       if (err) {
         return res.json({

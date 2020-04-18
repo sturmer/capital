@@ -27,7 +27,7 @@ const LoginForm = (props) => {
   const handleUserLogin = (event) => {
     event.preventDefault();
 
-    console.log("posting...", JSON.stringify(formData));
+    // console.log("posting...", JSON.stringify(formData));
 
     fetch("/login", {
       method: "POST",
@@ -41,12 +41,20 @@ const LoginForm = (props) => {
     })
       .then((res) => {
         if (res.status === 200) {
-          console.log("Logged in");
-          props.setAuthState({ ...props.state, isAuthenticated: true });
-          history.replace("/"); // Redirect to home
+          return res.json();
         } else {
           throw new Error(res.error);
         }
+      })
+      .then((resJson) => {
+        // console.log("Logged in", { resJson });
+
+        props.setAuthState({
+          ...props.authState,
+          isAuthenticated: true,
+          token: resJson.token,
+        });
+        history.replace("/"); // Redirect to home
       })
       .catch((err) => {
         console.error(err);

@@ -4,6 +4,7 @@ import { Route, Redirect } from "react-router-dom";
 // A wrapper for <Route> that redirects to the login
 // screen if you're not yet authenticated.
 const ProtectedRoute = ({ children, authState, ...rest }) => {
+  //   console.log({ authState });
   return (
     <Route
       {...rest}

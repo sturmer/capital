@@ -20,7 +20,6 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    // TODO Use the equivalent of an enum instead of strings for types (actionType.fetchCategoriesReq)
     case actionTypes.fetchExpenses:
       return {
         ...state,
@@ -56,12 +55,13 @@ const reducer = (state, action) => {
 
 // TODO Click on list item to edit it!
 const MonthHistoryPanel = (props) => {
-  // const { state: authState } = useContext(AuthContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     dispatch({ type: actionTypes.fetchExpenses });
+
+    console.log({ Authorization: `Bearer ${props.authToken}` });
 
     fetch("/expenses", {
       headers: { Authorization: `Bearer ${props.authToken}` },

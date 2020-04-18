@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "../client/build")));
 
 app.get("/expenses", middleware.checkToken, (req, res) => {
+  // console.log("retrieving expenses from DB...");
   res.json(expenses);
 });
 
@@ -28,14 +29,13 @@ app.post("/login", (req, res) => {
   const username = req.body.username;
   const userPassword = req.body.password;
 
-  console.log({ body: req.body });
-
   if (username && userPassword) {
     if (username === mockedUsername && userPassword === mockedPassword) {
       const token = jwt.sign({ username }, config.secret, {
         expiresIn: "24h", // expires in 24 hours
       });
-      // return the JWT token for the future API calls
+      // Return the JWT token for the future API calls
+      // console.log({ route: "/login", token });
       return res.json({
         success: true,
         message: "Authentication successful!",
@@ -54,7 +54,7 @@ app.post("/login", (req, res) => {
   } else {
     return res.status(400).json({
       success: false,
-      message: "Authentication failed! Please check the request",
+      message: "Authentication failed! Please, please check the request",
     });
   }
 });
