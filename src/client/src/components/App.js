@@ -33,7 +33,7 @@ const App = () => {
         </ProtectedRoute>
 
         <ProtectedRoute path="/categories" authState={state}>
-          <CategoryPanel authToken={state.token} />
+          <CategoryPanel authUser={state.user} authToken={state.token} />
         </ProtectedRoute>
         <Route
           path="/login"

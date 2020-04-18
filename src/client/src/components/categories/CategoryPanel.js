@@ -68,7 +68,7 @@ const CategoryPanel = (props) => {
   useEffect(() => {
     dispatch({ type: actionTypes.fetchCategories });
 
-    fetch("/categories", {
+    fetch(`/categories/${props.authUser}`, {
       headers: { Authorization: `Bearer ${props.authToken}` },
     })
       .then((res) => {
@@ -89,7 +89,7 @@ const CategoryPanel = (props) => {
         console.log(err);
         dispatch({ type: actionTypes.fetchCategoriesFailure });
       });
-  }, [props.authToken]);
+  }, [props.authUser, props.authToken]);
 
   const deleteCategory = (id) => {
     // TODO Write updated list of categories to file

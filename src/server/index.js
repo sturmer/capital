@@ -21,8 +21,8 @@ app.get("/expenses/:user", middleware.checkToken, (req, res) => {
   res.json(expenses[req.params.user]);
 });
 
-app.get("/categories", middleware.checkToken, (req, res) => {
-  res.json(categories);
+app.get("/categories/:user", middleware.checkToken, (req, res) => {
+  res.json(categories[req.params.user]);
 });
 
 app.post("/login", (req, res) => {
