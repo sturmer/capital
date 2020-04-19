@@ -8,9 +8,6 @@ import { Navigation } from "./common/Navigation";
 import { LoginForm } from "./login/LoginForm";
 import { ProtectedRoute } from "./common/ProtectedRoute";
 
-// TODO Use custom domain for Heroku app
-// TODO Decide on DB (or just files in the beginning?) and store data in it -- keep using files as long as possible.
-
 const initialState = {
   isAuthenticated: false,
   user: null,
