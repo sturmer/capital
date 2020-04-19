@@ -4,7 +4,15 @@ const categories = {
     { id: 2, name: "housing" },
     { id: 3, name: "foodDelivery" },
   ],
-  k: [{ id: 4, name: "barlafüs" }],
+  kat: [{ id: 4, name: "barlafüs" }],
 };
 
 module.exports = categories;
+
+// const mongoose = require("mongoose");
+
+// const categorySchema = new mongoose.Schema({
+//   name: { type: String, required: true, unique: true },
+// });
+
+// module.exports = mongoose.model("Category", categorySchema);

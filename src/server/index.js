@@ -1,11 +1,14 @@
 const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
-const config = require("./config/index");
+const { secret } = require("./config/config.dev");
 const middleware = require("./middlewares/authMiddleware");
 const expenses = require("./models/Expense");
 const categories = require("./models/Category");
+const { db } = require("./database");
+const { User } = require("./models/User");
 
 const app = express();
 app.use(express.json());
@@ -26,48 +29,113 @@ app.get("/categories/:user", middleware.checkToken, (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  // TODO Search in DB/filesystem
-  const mockedUsername = "gc";
-  const mockedPassword = "n";
-  const mockedUsername2 = "k";
-  const mockedPassword2 = "n";
-
   const username = req.body.username;
-  const userPassword = req.body.password;
+  const clearTextPassword = req.body.password;
 
-  // console.log({ username, userPassword });
+  console.log({ username, clearTextPassword });
 
-  if (username && userPassword) {
-    if (
-      (username === mockedUsername && userPassword === mockedPassword) ||
-      (username === mockedUsername2 && userPassword === mockedPassword2)
-    ) {
-      const token = jwt.sign({ username }, config.secret, {
-        expiresIn: "24h", // expires in 24 hours
+  if (username && clearTextPassword) {
+    User.findOne({ username })
+      .then((doc) => {
+        console.log({ comment: "retrieved", doc });
+
+        if (bcrypt.compareSync(clearTextPassword, doc.hash)) {
+          console.log("password correct");
+          // Passwords match
+          const token = jwt.sign({ username }, secret, {
+            expiresIn: "24h", // expires in 24 hours
+          });
+
+          // Return the JWT token for the future API calls
+          // console.log({ route: "/login", token });
+          return res.json({
+            success: true,
+            message: "Authentication successful!",
+            token,
+            user: {
+              firstName: "Admin",
+              lastName: "User",
+            },
+          });
+        } else {
+          // Passwords don't match
+          console.log("password wrong");
+          return res.status(400).json({
+            success: false,
+            message: "Wrong password",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log("error in find()");
+        return res.status(400).json({
+          success: false,
+          message: err,
+        });
       });
-      // Return the JWT token for the future API calls
-      // console.log({ route: "/login", token });
-      return res.json({
-        success: true,
-        message: "Authentication successful!",
-        token,
-        user: {
-          firstName: "Admin",
-          lastName: "User",
-        },
-      });
-    } else {
-      return res.status(401).json({
-        success: false,
-        message: "Incorrect username or password",
-      });
-    }
   } else {
     return res.status(400).json({
       success: false,
-      message: "Authentication failed! Please, please check the request",
+      mesage: "Authentication failed! Please, please check the request",
     });
   }
+});
+
+// console.log({ username, userPassword });
+
+// if (username && userPassword) {
+//   if (
+//     (username === mockedUsername && userPassword === mockedPassword) ||
+//     (username === mockedUsername2 && userPassword === mockedPassword2)
+//   ) {
+//     const token = jwt.sign({ username }, config.secret, {
+//       expiresIn: "24h", // expires in 24 hours
+//     });
+//     // Return the JWT token for the future API calls
+//     // console.log({ route: "/login", token });
+//     return res.json({
+//       success: true,
+//       message: "Authentication successful!",
+//       token,
+//       user: {
+//         firstName: "Admin",
+//         lastName: "User",
+//       },
+//     });
+//   } else {
+//     return res.status(401).json({
+//       success: false,
+//       message: "Incorrect username or password",
+//     });
+//   }
+// } else {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Authentication failed! Please, please check the request",
+//   });
+// }
+
+app.post("/signup", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  console.log({ username, password });
+
+  // TODO be async or use promise
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  const newUser = new User({ username, hash: hashedPassword });
+  newUser
+    .save()
+    .then((doc) => {
+      console.log(doc);
+      // FIXME For some reason this hangs forever when sending request
+      // from Postman...
+      return res.status(200);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(400);
+    });
 });
 
 // Handles any requests that don't match the ones above

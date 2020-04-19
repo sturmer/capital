@@ -25,7 +25,7 @@ const expenses = {
       description: "Monthly donation to WWF",
     },
   ],
-  k: [
+  kat: [
     {
       id: 4,
       date: "2020-03-18",

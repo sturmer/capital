@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const config = require("../config");
+const { secret } = require("../config/config.dev");
 
 const checkToken = (req, res, next) => {
   let token = req.headers["x-access-token"] || req.headers["authorization"];
@@ -17,8 +17,8 @@ const checkToken = (req, res, next) => {
   }
 
   if (token) {
-    console.log({ middleware: "authMiddleware", token, secret: config.secret });
-    jwt.verify(token, config.secret, (err, decoded) => {
+    console.log({ middleware: "authMiddleware", token, secret });
+    jwt.verify(token, secret, (err, decoded) => {
       if (err) {
         return res.json({
           success: false,

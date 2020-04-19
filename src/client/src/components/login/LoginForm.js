@@ -27,8 +27,9 @@ const LoginForm = (props) => {
   const handleUserLogin = (event) => {
     event.preventDefault();
 
-    // console.log("posting...", JSON.stringify(formData));
+    // console.log("posting...", JSON.stringify(formData))
 
+    // TODO Am I sending the data in clear text? Can a malicious user attack my server?
     fetch("/login", {
       method: "POST",
       body: JSON.stringify({
