@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Form, Label, Input, FormGroup, Col } from "reactstrap";
-import { v4 as uuidV4 } from "uuid";
 
 const NewCategoryForm = (props) => {
   const [categoryName, setCategoryName] = useState("");
@@ -15,7 +14,7 @@ const NewCategoryForm = (props) => {
 
     props.dispatch({
       type: props.addCategoryType,
-      payload: { id: uuidV4(), name: categoryName },
+      payload: { name: categoryName },
     });
 
     event.preventDefault(); // crucial, or the whole page would be reloaded

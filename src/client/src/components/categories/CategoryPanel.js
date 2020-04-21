@@ -45,13 +45,15 @@ const reducer = (state, action) => {
       // property will be overridden by the current state!
       return {
         ...state,
-        categories: state.categories.filter((c) => c.id !== action.payload),
+        categories: state.categories.filter((c) => c !== action.payload),
       };
 
     case actionTypes.addCategory:
+      // TODO Persist category
+      console.log({ action });
       return {
         ...state,
-        categories: [...state.categories, action.payload],
+        categories: [...state.categories, action.payload.name],
       };
 
     default:
@@ -91,9 +93,9 @@ const CategoryPanel = (props) => {
       });
   }, [props.authUser, props.authToken]);
 
-  const deleteCategory = (id) => {
+  const deleteCategory = (categoryName) => {
     // TODO Write updated list of categories to file
-    dispatch({ type: actionTypes.deleteCategory, payload: id });
+    dispatch({ type: actionTypes.deleteCategory, payload: categoryName });
   };
 
   console.log({ state: JSON.stringify(state) });
@@ -105,9 +107,9 @@ const CategoryPanel = (props) => {
       {state &&
         state.categories &&
         state.categories.map((c) => (
-          <Row key={c.id}>
-            <Category name={c.name} />
-            <Button color="warning" onClick={() => deleteCategory(c.id)}>
+          <Row key={c}>
+            <Category name={c} />
+            <Button color="warning" onClick={() => deleteCategory(c)}>
               Remove
             </Button>
           </Row>

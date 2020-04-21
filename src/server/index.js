@@ -6,9 +6,9 @@ const bcrypt = require("bcrypt");
 const { secret } = require("./config/config.dev");
 const middleware = require("./middlewares/authMiddleware");
 const expenses = require("./models/Expense");
-const categories = require("./models/Category");
-const { db } = require("./database");
 const { User } = require("./models/User");
+
+require("./database");
 
 const app = express();
 app.use(express.json());
@@ -25,7 +25,17 @@ app.get("/expenses/:user", middleware.checkToken, (req, res) => {
 });
 
 app.get("/categories/:user", middleware.checkToken, (req, res) => {
-  res.json(categories[req.params.user]);
+  User.findOne({ username: req.params.user })
+    .then((doc) => {
+      console.log({ doc });
+      return res.json(doc.categories);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(400);
+    });
+
+  // res.json(categories[req.params.user]);
 });
 
 app.post("/login", (req, res) => {
@@ -81,40 +91,6 @@ app.post("/login", (req, res) => {
   }
 });
 
-// console.log({ username, userPassword });
-
-// if (username && userPassword) {
-//   if (
-//     (username === mockedUsername && userPassword === mockedPassword) ||
-//     (username === mockedUsername2 && userPassword === mockedPassword2)
-//   ) {
-//     const token = jwt.sign({ username }, config.secret, {
-//       expiresIn: "24h", // expires in 24 hours
-//     });
-//     // Return the JWT token for the future API calls
-//     // console.log({ route: "/login", token });
-//     return res.json({
-//       success: true,
-//       message: "Authentication successful!",
-//       token,
-//       user: {
-//         firstName: "Admin",
-//         lastName: "User",
-//       },
-//     });
-//   } else {
-//     return res.status(401).json({
-//       success: false,
-//       message: "Incorrect username or password",
-//     });
-//   }
-// } else {
-//   return res.status(400).json({
-//     success: false,
-//     message: "Authentication failed! Please, please check the request",
-//   });
-// }
-
 app.post("/signup", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -130,7 +106,7 @@ app.post("/signup", (req, res) => {
       console.log(doc);
       // FIXME For some reason this hangs forever when sending request
       // from Postman...
-      return res.status(200);
+      return res.status(200).json({});
     })
     .catch((err) => {
       console.error(err);
