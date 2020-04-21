@@ -10,17 +10,26 @@ const actionTypes = {
   fetchCategoriesFailure: "FETCH_CATEGORIES_FAILURE",
   deleteCategory: "DELETE_CATEGORY",
   addCategory: "ADD_CATEGORY",
+  SET_AUTH: "SET_AUTH",
 };
 
 const initialState = {
   categories: [],
   hasError: false,
   isFetching: false,
+  authUser: null,
+  authToken: null,
 };
 
 // TODO Remove reducer shit
 const reducer = (state, action) => {
   switch (action.type) {
+    case action.SET_AUTH:
+      return {
+        ...state,
+        authToken: action.payload.token,
+        authUser: action.payload.user,
+      };
     case actionTypes.fetchCategories:
       return {
         ...state,
@@ -49,12 +58,40 @@ const reducer = (state, action) => {
       };
 
     case actionTypes.addCategory:
-      // TODO Persist category
       console.log({ action });
-      return {
+      const newState = {
         ...state,
         categories: [...state.categories, action.payload.name],
       };
+
+      // TODO Persist category
+      // ...  Post /categories to server
+      fetch(`/categories/${state.authUser}`, {
+        method: "POST",
+        body: JSON.stringify({
+          category: action.payload.name,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state.authToken}`,
+        },
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            return res.json();
+          } else {
+            throw new Error(res.error);
+          }
+        })
+        .then((resJson) => {
+          console.log("Saved", { resJson });
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("Error saving category please try again");
+        });
+
+      return newState;
 
     default:
       return state;
@@ -68,6 +105,10 @@ const CategoryPanel = (props) => {
 
   // Fetch categories from server
   useEffect(() => {
+    dispatch({
+      type: actionTypes.setAuth,
+      payload: { user: props.authUser, token: props.authToken },
+    });
     dispatch({ type: actionTypes.fetchCategories });
 
     fetch(`/categories/${props.authUser}`, {

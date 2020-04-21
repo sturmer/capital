@@ -38,6 +38,23 @@ app.get("/categories/:user", middleware.checkToken, (req, res) => {
   // res.json(categories[req.params.user]);
 });
 
+app.post("/categories/:user", middleware.checkToken, (req, res) => {
+  console.log({ category: req.body.category, user: req.params.user });
+
+  User.updateOne(
+    { username: req.params.user },
+    { $push: { categories: req.body.category } }
+  )
+    .then((result) => {
+      console.log({ result });
+      return res.json({});
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(400).json({});
+    });
+});
+
 app.post("/login", (req, res) => {
   const username = req.body.username;
   const clearTextPassword = req.body.password;
@@ -104,13 +121,11 @@ app.post("/signup", (req, res) => {
     .save()
     .then((doc) => {
       console.log(doc);
-      // FIXME For some reason this hangs forever when sending request
-      // from Postman...
       return res.status(200).json({});
     })
     .catch((err) => {
       console.error(err);
-      return res.status(400);
+      return res.status(400).json({});
     });
 });
 
