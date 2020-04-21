@@ -2,10 +2,11 @@ const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const moment = require("moment");
 
 const { secret } = require("./config/config.dev");
 const middleware = require("./middlewares/authMiddleware");
-const expenses = require("./models/Expense");
+const { Expense } = require("./models/Expense");
 const { User } = require("./models/User");
 
 require("./database");
@@ -21,7 +22,73 @@ app.get("/expenses/:user", middleware.checkToken, (req, res) => {
   //   user: req.params.user,
   //   expenses: expenses[req.params.user],
   // });
-  res.json(expenses[req.params.user]);
+  // res.json(expenses[req.params.user]);
+
+  User.findOne({ username: req.params.user })
+    .then((userDoc) => {
+      Expense.find({ user: userDoc._id })
+        .then((docs) => {
+          console.log({ docs });
+          const result = docs.map((doc) => {
+            return {
+              id: doc._id,
+              date: moment(doc.date).format("YYYY-MM-DD"),
+              amount: doc.amount.$numberDecimal,
+              category: doc.category,
+              toFrom: doc.toFrom,
+              description: doc.description,
+            };
+          });
+          return res.json(result);
+        })
+        .catch((err) => {
+          // FIXME There's some repeated code!
+          console.error(err);
+          return res.status(400);
+        });
+    })
+    .catch((userError) => {
+      console.error(userError);
+      return res.status(400);
+    });
+});
+
+app.post("/expenses/:user", middleware.checkToken, (req, res) => {
+  console.log("server: adding expense...", {
+    expense: req.body.expense,
+    user: req.params.user,
+  });
+
+  User.findOne({ username: req.params.user })
+    .then((userDoc) => {
+      // Can the user be non-existing? No, because we get it from the auth
+      // state of the client component.
+      const { amount, date, category, toFrom, description } = req.body.expense;
+      const newExpense = new Expense({
+        user: userDoc._id,
+        category,
+        date,
+        amount,
+        toFrom,
+        description,
+      });
+
+      newExpense
+        .save()
+        .then((doc) => {
+          console.log("Created expense", { doc });
+          return res.status(200).json({ expenseId: doc._id });
+        })
+        .catch((err) => {
+          console.error(err);
+          return res.status(400).json({});
+        });
+    })
+
+    .catch((userFindErr) => {
+      console.error(userFindErr);
+      return res.status(400).json({});
+    });
 });
 
 app.get("/categories/:user", middleware.checkToken, (req, res) => {
@@ -86,7 +153,7 @@ app.post("/login", (req, res) => {
   if (username && clearTextPassword) {
     User.findOne({ username })
       .then((doc) => {
-        console.log({ comment: "retrieved", doc });
+        // console.log({ comment: "retrieved User", doc });
 
         if (bcrypt.compareSync(clearTextPassword, doc.hash)) {
           console.log("password correct");

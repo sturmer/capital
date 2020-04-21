@@ -10,16 +10,27 @@ const actionTypes = {
   fetchExpensesFail: "FETCH_EXPENSES_FAILURE",
   deleteExpense: "DELETE_EXPENSE",
   addExpense: "ADD_EXPENSE",
+  SET_AUTH: "SET_AUTH",
 };
 
 const initialState = {
   expenses: [],
   isFetching: false,
+  isSaving: false,
   hasError: false,
+  authToken: null,
+  authUser: null,
 };
 
 const reducer = (state, action) => {
+  let newState = null;
   switch (action.type) {
+    case actionTypes.SET_AUTH:
+      return {
+        ...state,
+        authUser: action.payload.user,
+        authToken: action.payload.token,
+      };
     case actionTypes.fetchExpenses:
       return {
         ...state,
@@ -27,11 +38,13 @@ const reducer = (state, action) => {
         hasError: false,
       };
     case actionTypes.fetchExpensesSuccess:
-      return {
+      console.log({ payload: action.payload });
+      newState = {
         ...state,
         isFetching: false,
         expenses: action.payload,
       };
+      return newState;
     case actionTypes.fetchExpensesFail:
       return {
         ...state,
@@ -43,11 +56,45 @@ const reducer = (state, action) => {
         ...state,
         expenses: state.expenses.filter((e) => e.id !== action.payload),
       };
+
     case actionTypes.addExpense:
-      return {
-        ...state,
-        expenses: [...state.expenses, action.payload],
-      };
+      console.log("adding expense...");
+
+      // This fetch needs fixing.
+      fetch(`/expenses/${state.authUser}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${state.authToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ expense: action.payload }),
+      })
+        .then((res) => {
+          console.log({ res });
+          if (res.status === 200) {
+            return res.json();
+          } else {
+            throw new Error(res.error);
+          }
+        })
+        .then((resJson) => {
+          console.log("...expense saved", { resJson });
+          const newExpense = { id: resJson.expenseId, ...action.payload };
+          newState = {
+            ...state,
+            expenses: [...state.expenses, newExpense],
+          };
+          // TODO Remove this whole .then? (also in delete category)
+          return newState;
+        })
+        .catch((err) => {
+          console.error(err);
+          return state;
+        });
+
+      // FIXME We need to wait for the server to finish before saving the state.
+      return state;
+
     default:
       return state;
   }
@@ -59,6 +106,11 @@ const MonthHistoryPanel = (props) => {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_AUTH,
+      payload: { user: props.authUser, token: props.authToken },
+    });
+
     dispatch({ type: actionTypes.fetchExpenses });
 
     fetch(`/expenses/${props.authUser}`, {
@@ -72,7 +124,7 @@ const MonthHistoryPanel = (props) => {
         }
       })
       .then((resJson) => {
-        // console.log(resJson);
+        console.log({ resJson });
         dispatch({
           type: actionTypes.fetchExpensesSuccess,
           payload: resJson,

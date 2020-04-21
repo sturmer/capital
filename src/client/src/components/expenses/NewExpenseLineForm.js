@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { v4 as uuidV4 } from "uuid";
 import { Button, Form, FormGroup, Label, Col, Input } from "reactstrap";
-
-import { currency } from "../../constants";
 
 const NewExpenseLineForm = (props) => {
   // TODO input validation!
@@ -42,25 +39,18 @@ const NewExpenseLineForm = (props) => {
   const handleLineSubmit = (event) => {
     event.preventDefault();
 
-    // FIXME brittle.
-    const isExpense = amount[0] === "-";
-
     // Hide form
     props.handleVisibility(false);
 
     const newLine = {
-      id: uuidV4(),
-      date,
-      amount: `${
-        isExpense ? "-" + currency + amount.slice(1) : currency + " " + amount
-      }`,
+      date: date,
+      amount,
       category,
       toFrom,
       description,
     };
+    console.log("dispatching new line", { newLine });
     props.dispatch({ type: props.actionType, payload: newLine });
-
-    // TODO: Write expenses to file (use timer + save button?)
   };
 
   return (
