@@ -47,7 +47,29 @@ app.post("/categories/:user", middleware.checkToken, (req, res) => {
   )
     .then((result) => {
       console.log({ result });
+
+      // It should be equivalent to do: User.findOne, and then on the result: result.push(category), result.save();
+      // Would that be less efficient?
+
       return res.json({});
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(400).json({});
+    });
+});
+
+app.delete("/categories/:user", middleware.checkToken, (req, res) => {
+  console.log("Deleting...", { target: req.body.target });
+  User.findOne({ username: req.params.user })
+    .then((result) => {
+      console.log({ result });
+      const idx = result.categories.indexOf(req.body.target);
+      if (idx > -1) {
+        result.categories.splice(idx, 1);
+      }
+      result.save();
+      return res.json({ updatedCategories: result.categories });
     })
     .catch((err) => {
       console.error(err);
@@ -120,7 +142,7 @@ app.post("/signup", (req, res) => {
   newUser
     .save()
     .then((doc) => {
-      console.log(doc);
+      console.log({ doc });
       return res.status(200).json({});
     })
     .catch((err) => {

@@ -23,6 +23,7 @@ const initialState = {
 
 // TODO Remove reducer shit
 const reducer = (state, action) => {
+  let newState = null;
   switch (action.type) {
     case action.SET_AUTH:
       return {
@@ -52,20 +53,43 @@ const reducer = (state, action) => {
     case actionTypes.deleteCategory:
       // NOTE: If I put `categories` first, then `...state`, the categories
       // property will be overridden by the current state!
-      return {
+      newState = {
         ...state,
         categories: state.categories.filter((c) => c !== action.payload),
       };
 
+      fetch(`/categories/${state.authUser}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state.authToken}`,
+        },
+        body: JSON.stringify({ target: action.payload }),
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            return res.json();
+          } else {
+            throw new Error(res.error);
+          }
+        })
+        .then((_resJson) => {
+          console.log("Deleted");
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+
+      return newState;
+
     case actionTypes.addCategory:
       console.log({ action });
-      const newState = {
+      newState = {
         ...state,
         categories: [...state.categories, action.payload.name],
       };
 
-      // TODO Persist category
-      // ...  Post /categories to server
+      // Persist new category
       fetch(`/categories/${state.authUser}`, {
         method: "POST",
         body: JSON.stringify({
@@ -83,12 +107,12 @@ const reducer = (state, action) => {
             throw new Error(res.error);
           }
         })
-        .then((resJson) => {
-          console.log("Saved", { resJson });
+        .then((_resJson) => {
+          console.log("Saved");
+          // TODO Remove this whole .then? (also in delete category)
         })
         .catch((err) => {
           console.error(err);
-          alert("Error saving category please try again");
         });
 
       return newState;
@@ -105,10 +129,12 @@ const CategoryPanel = (props) => {
 
   // Fetch categories from server
   useEffect(() => {
+    // Save user and token for next requests (add/remove category)
     dispatch({
       type: actionTypes.setAuth,
       payload: { user: props.authUser, token: props.authToken },
     });
+
     dispatch({ type: actionTypes.fetchCategories });
 
     fetch(`/categories/${props.authUser}`, {
