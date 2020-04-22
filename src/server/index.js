@@ -18,18 +18,21 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "../client/build")));
 
 app.get("/expenses/:user/total", middleware.checkToken, (req, res) => {
-  // console.log({ user: req.params.user });
+  console.log({ user: req.params.user });
   User.findOne({ username: req.params.user })
     .then((userDoc) => {
       console.log({ userDoc });
       Expense.find({ user: userDoc._id })
         .then((docs) => {
-          // console.log({ docs });
-          const total = docs.reduce((acc, cur) => {
-            acc += Number(cur.amount);
-            return acc;
-          }, 0);
-          return res.send({ total });
+          console.log({ docs });
+          const totalByCategory = {};
+          let total = 0;
+          docs.forEach((doc) => {
+            totalByCategory[doc.category] += Number(doc.amount);
+            total += Number(doc.amount);
+          });
+          console.log({ total, totalByCategory });
+          return res.send({ total, totalByCategory });
         })
         .catch((err) => {
           // FIXME There's some repeated code!
@@ -44,7 +47,7 @@ app.get("/expenses/:user/total", middleware.checkToken, (req, res) => {
 });
 
 app.get("/expenses/:user", middleware.checkToken, (req, res) => {
-  User.findOne({ username: req.params.user }) // TODO Can get it from the headers and do without the /:user
+  User.findOne({ username: req.params.user })
     .then((userDoc) => {
       Expense.find({ user: userDoc._id })
         .then((docs) => {
@@ -59,6 +62,8 @@ app.get("/expenses/:user", middleware.checkToken, (req, res) => {
               description: doc.description,
             };
           });
+
+          // TODO Just use res.send(result) and remove the useless conversions downstream
           return res.json(result);
         })
         .catch((err) => {

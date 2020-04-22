@@ -15,6 +15,7 @@ const initialState = {
   expenseToAdd: null,
   idToDelete: null,
   total: 0,
+  totalByCategory: null,
 };
 
 // TODO Create a separate Revenues panel with the incoming money!
@@ -131,8 +132,8 @@ const ExpensesPanel = (props) => {
         }
       })
       .then((resJson) => {
-        // console.log({ resJson });
-        dispatch({ type: actionTypes.updateTotal, payload: resJson.total });
+        console.log({ resJson });
+        dispatch({ type: actionTypes.updateTotal, payload: resJson });
       })
       .catch((err) => {
         console.error(err);
@@ -216,7 +217,10 @@ const ExpensesPanel = (props) => {
             New Expense
           </button>
 
-          <Summary total={state.total} />
+          <Summary
+            total={state.total}
+            totalByCategory={state.totalByCategory}
+          />
         </>
       )}
     </>

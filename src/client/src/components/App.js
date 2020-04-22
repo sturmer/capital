@@ -26,7 +26,7 @@ const App = () => {
       <Switch>
         {/* TODO make path '/' point to /expenses */}
         <ProtectedRoute exact path="/" authState={state}>
-          <ExpensesPanel authUser={state.user} authToken={state.token} />
+          <ExpensesPanel authUser={state.user} authToken={state.token} />}
         </ProtectedRoute>
 
         <ProtectedRoute path="/categories" authState={state}>

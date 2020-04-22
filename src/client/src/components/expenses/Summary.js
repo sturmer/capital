@@ -13,6 +13,11 @@ const Summary = (props) => {
         <tbody>
           <tr>
             <td>{props.total}</td>
+            {Object.keys(props.totalByCategory).map((k) => (
+              <td key={k}>
+                {k}: {props.totalByCategory[k]}
+              </td>
+            ))}
           </tr>
         </tbody>
       </table>

@@ -56,9 +56,11 @@ const reducer = (state, action) => {
       };
 
     case actionTypes.updateTotal:
+      console.log({ payload: action.payload });
       return {
         ...state,
-        total: action.payload,
+        total: action.payload.total,
+        totalByCategory: action.payload.totalByCategory,
       };
 
     default:

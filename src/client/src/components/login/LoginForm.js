@@ -1,30 +1,28 @@
-import React, { useState } from "react";
+import React, { useReducer, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { reducer } from "./reducer";
+import * as actionTypes from "./actionTypes";
 
 const LoginForm = (props) => {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [state, dispatch] = useReducer(reducer, {
+    isProcessing: false,
+    submittedData: {},
+    result: null,
+    error: null,
+  });
   const history = useHistory();
 
-  const handleInputChange = (event) => {
-    const { value, name } = event.target;
-    // console.log({ name, value });
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  useEffect(() => {
+    if (!state.submittedData || !state.isProcessing) {
+      return;
+    }
 
-  const handleUserLogin = (event) => {
-    event.preventDefault();
-
-    // console.log("posting...", JSON.stringify(formData))
-
-    // TODO Am I sending the data in clear text? Can a malicious user attack my server?
     fetch("/login", {
       method: "POST",
       body: JSON.stringify({
-        username: formData.email,
-        password: formData.password,
+        username: state.submittedData.email,
+        password: state.submittedData.password,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -38,20 +36,38 @@ const LoginForm = (props) => {
         }
       })
       .then((resJson) => {
-        // console.log("Logged in", { resJson });
+        console.log("Logged in", { resJson });
 
         props.setAuthState({
           ...props.authState,
           isAuthenticated: true,
           token: resJson.token,
-          user: formData.email,
+          user: state.submittedData.email,
         });
+        // dispatch({ type: actionTypes.REQUEST_SUCCESSFUL });
         history.replace("/"); // Redirect to home
       })
       .catch((err) => {
         console.error(err);
-        alert("Error logging in please try again");
+        dispatch({ type: actionTypes.REQUEST_FAILED });
       });
+  }, [history, state.isProcessing, state.submittedData, props]);
+
+  const handleInputChange = (event) => {
+    const { value, name } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleUserLogin = (event) => {
+    event.preventDefault();
+
+    // console.log("posting...", JSON.stringify(formData))
+
+    // TODO Am I sending the data in clear text? Can a malicious user attack my server?
+    dispatch({ type: actionTypes.SEND_LOGIN_REQUEST, payload: formData });
   };
 
   return (
@@ -91,7 +107,9 @@ const LoginForm = (props) => {
           </div>
 
           <div className="col" sm={10}>
-            <button className="btn btn-primary">Log In</button>
+            <button className="btn btn-primary" disabled={state.isProcessing}>
+              Log In
+            </button>
           </div>
         </form>
       </div>
