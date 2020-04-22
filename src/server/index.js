@@ -53,6 +53,8 @@ app.get("/expenses/:user", middleware.checkToken, (req, res) => {
     });
 });
 
+// TODO Change :user to :expenseId, makes more sense
+// TODO Switch to GraphQL
 app.post("/expenses/:user", middleware.checkToken, (req, res) => {
   console.log("server: adding expense...", {
     expense: req.body.expense,
@@ -87,6 +89,19 @@ app.post("/expenses/:user", middleware.checkToken, (req, res) => {
 
     .catch((userFindErr) => {
       console.error(userFindErr);
+      return res.status(400).json({});
+    });
+});
+
+app.delete("/expenses/:expenseId", middleware.checkToken, (req, res) => {
+  // console.log(`deleting ${req.params.expenseId}`);
+  Expense.findByIdAndDelete(req.params.expenseId)
+    .then((expense) => {
+      console.log("deleted", { expense });
+      return res.json({});
+    })
+    .catch((err) => {
+      console.error(err);
       return res.status(400).json({});
     });
 });

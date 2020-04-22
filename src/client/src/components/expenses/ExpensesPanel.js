@@ -22,6 +22,7 @@ const initialState = {
   authToken: null,
   authUser: null,
   expenseToAdd: null,
+  idToDelete: null,
 };
 
 const reducer = (state, action) => {
@@ -69,6 +70,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         expenses: state.expenses.filter((e) => e.id !== action.payload),
+        idToDelete: action.payload,
       };
 
     case actionTypes.addExpense:
@@ -159,8 +161,30 @@ const ExpensesPanel = (props) => {
       });
   }, [state.authUser, state.authToken, state.expenseToAdd]);
 
+  useEffect(() => {
+    if (!state.idToDelete) {
+      return;
+    }
+
+    const id = state.idToDelete;
+    state.idToDelete = null;
+
+    fetch(`/expenses/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${state.authToken}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log(`...deleted ${id} [${res}]`);
+      })
+      .catch((err) => {
+        console.error(`...delete failed for ${id}: ${err}`);
+      });
+  }, [state.authToken, state.idToDelete]);
+
   const deleteExpense = (id) => {
-    // TODO Write the changed expenses to file
     dispatch({ type: actionTypes.deleteExpense, payload: id });
   };
 
