@@ -1,15 +1,22 @@
 import React from "react";
-import { Container, Row, Col } from "reactstrap";
 
 const Summary = (props) => {
   return (
-    <Container fluid="sm">
+    <>
       <h2>Summary</h2>
-      <Row>
-        <Col>Total</Col>
-        <Col>{props.total}</Col>
-      </Row>
-    </Container>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{props.total}</td>
+          </tr>
+        </tbody>
+      </table>
+    </>
   );
 };
 

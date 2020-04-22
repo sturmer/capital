@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer } from "react";
 // TODO Do without reactstrap
-import { Card, Col, CardText, Container, Button, Row } from "reactstrap";
+import { Card, CardText } from "reactstrap";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
 import { Summary } from "./Summary";
@@ -161,48 +161,56 @@ const ExpensesPanel = (props) => {
           <CardText>AN ERROR HAS OCCURRED</CardText>
         </Card>
       ) : (
-        <Container fluid="sm">
+        <>
           <h2>Expenses</h2>
-          <Row>
-            <Col>Date</Col>
-            <Col>Amount</Col>
-            <Col>Category</Col>
-            <Col>To/From</Col>
-            <Col>Description</Col>
-            <Col></Col>
-          </Row>
-          {state.expenses.length > 0 &&
-            state.expenses.map((e) => (
-              <Row key={e.id}>
-                <Col>{e.date}</Col>
-                <Col>{e.amount}</Col>
-                <Col>{e.category}</Col>
-                <Col>{e.toFrom}</Col>
-                <Col>{e.description}</Col>
-                <Button color="warning" onClick={() => deleteExpense(e.id)}>
-                  Delete
-                </Button>
-              </Row>
-            ))}
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Category</th>
+                <th scope="col">To/From</th>
+                <th scope="col">Description</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.expenses.length > 0 &&
+                state.expenses.map((e) => (
+                  <tr key={e.id}>
+                    <td>{e.date}</td>
+                    <td>{e.amount}</td>
+                    <td>{e.category}</td>
+                    <td>{e.toFrom}</td>
+                    <td>{e.description}</td>
+                    <td>
+                      <button
+                        color="warning"
+                        onClick={() => deleteExpense(e.id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
 
-          <Row>
-            {showForm && (
-              <NewExpenseLineForm
-                handleVisibility={setShowForm}
-                dispatch={dispatch}
-                actionType={actionTypes.addExpense}
-              />
-            )}
-          </Row>
+              {/* TODO Add cancel button (and/or use Esc to cancel) */}
+            </tbody>
+          </table>
+          {showForm && (
+            <NewExpenseLineForm
+              handleVisibility={setShowForm}
+              dispatch={dispatch}
+              actionType={actionTypes.addExpense}
+            />
+          )}
 
-          <Row>
-            <Button color="primary" onClick={() => setShowForm(!showForm)}>
-              New Expense
-            </Button>
-            {/* TODO Add cancel button (and/or use Esc to cancel) */}
-          </Row>
+          <button color="primary" onClick={() => setShowForm(!showForm)}>
+            New Expense
+          </button>
+
           <Summary total={state.total} />
-        </Container>
+        </>
       )}
     </>
   );
