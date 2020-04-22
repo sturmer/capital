@@ -28,7 +28,7 @@ app.get("/expenses/:user", middleware.checkToken, (req, res) => {
     .then((userDoc) => {
       Expense.find({ user: userDoc._id })
         .then((docs) => {
-          console.log({ docs });
+          // console.log({ docs });
           const result = docs.map((doc) => {
             return {
               id: doc._id,
@@ -76,7 +76,7 @@ app.post("/expenses/:user", middleware.checkToken, (req, res) => {
       newExpense
         .save()
         .then((doc) => {
-          console.log("Created expense", { doc });
+          // console.log("Created expense", { doc });
           return res.status(200).json({ expenseId: doc._id });
         })
         .catch((err) => {
