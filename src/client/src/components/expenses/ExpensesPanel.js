@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useReducer } from "react";
-// TODO Do without reactstrap
-import { Card, CardText } from "reactstrap";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
 import { Summary } from "./Summary";
@@ -149,21 +147,27 @@ const ExpensesPanel = (props) => {
   return (
     <>
       {state.isFetching ? (
-        <Card>
-          <CardText>LOADING...</CardText>
-        </Card>
+        <div className="card">
+          <div className="card-body">
+            <p className="card-text">LOADING...</p>
+          </div>
+        </div>
       ) : state.expenseToAdd ? (
-        <Card>
-          <CardText>SAVING...</CardText>
-        </Card>
+        <div className="card">
+          <div className="card-body">
+            <p className="card-text">SAVING...</p>
+          </div>
+        </div>
       ) : state.hasError ? (
-        <Card>
-          <CardText>AN ERROR HAS OCCURRED</CardText>
-        </Card>
+        <div className="card">
+          <div className="card-body">
+            <p className="card-text">AN ERROR HAS OCCURRED</p>
+          </div>
+        </div>
       ) : (
         <>
           <h2>Expenses</h2>
-          <table className="table">
+          <table className="table table-striped table-bordered">
             <thead>
               <tr>
                 <th scope="col">Date</th>
@@ -185,7 +189,7 @@ const ExpensesPanel = (props) => {
                     <td>{e.description}</td>
                     <td>
                       <button
-                        color="warning"
+                        className="btn btn-warning"
                         onClick={() => deleteExpense(e.id)}
                       >
                         Delete
@@ -205,7 +209,10 @@ const ExpensesPanel = (props) => {
             />
           )}
 
-          <button color="primary" onClick={() => setShowForm(!showForm)}>
+          <button
+            className="btn btn-primary"
+            onClick={() => setShowForm(!showForm)}
+          >
             New Expense
           </button>
 

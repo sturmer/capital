@@ -4,7 +4,7 @@ const Summary = (props) => {
   return (
     <>
       <h2>Summary</h2>
-      <table className="table">
+      <table className="table table-striped table-bordered">
         <thead>
           <tr>
             <th>Total</th>
