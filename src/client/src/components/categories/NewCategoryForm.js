@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Form, Label, Input, FormGroup, Col } from "reactstrap";
 
 const NewCategoryForm = (props) => {
   const [categoryName, setCategoryName] = useState("");
@@ -21,20 +20,19 @@ const NewCategoryForm = (props) => {
   };
 
   return (
-    <Form onSubmit={handleCategorySubmit}>
-      <FormGroup>
-        <Col sm={10}>
-          <Label htmlFor="categoryName">Category Name</Label>
-          <Input
-            type="text"
-            name="categoryName"
-            value={categoryName}
-            onChange={handleCategoryChange}
-          ></Input>
-        </Col>
-      </FormGroup>
-      <button>Add</button>
-    </Form>
+    <form onSubmit={handleCategorySubmit}>
+      <div className="form-group">
+        <label htmlFor="categoryName">Category Name</label>
+        <input
+          className="form-control"
+          type="text"
+          name="categoryName"
+          value={categoryName}
+          onChange={handleCategoryChange}
+        ></input>
+      </div>
+      <button className="btn btn-primary">Add</button>
+    </form>
   );
 };
 

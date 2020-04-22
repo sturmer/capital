@@ -78,14 +78,10 @@ const reducer = (state, action) => {
       })
         .then((res) => {
           if (res.status === 200) {
-            return res.json();
+            console.log("Saved");
           } else {
             throw new Error(res.error);
           }
-        })
-        .then((_resJson) => {
-          console.log("Saved");
-          // TODO Remove this whole .then? (also in delete category)
         })
         .catch((err) => {
           console.error(err);

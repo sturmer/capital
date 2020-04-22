@@ -125,20 +125,19 @@ app.delete("/expenses/:expenseId", middleware.checkToken, (req, res) => {
     });
 });
 
-app.get("/categories/:user", middleware.checkToken, (req, res) => {
-  User.findOne({ username: req.params.user })
-    .then((doc) => {
-      console.log({ doc });
-      return res.json(doc.categories);
-    })
-    .catch((err) => {
-      console.error(err);
-      return res.status(400).end();
-    });
-});
-
 app
   .route("/categories/:user")
+  .get(middleware.checkToken, (req, res) => {
+    User.findOne({ username: req.params.user })
+      .then((doc) => {
+        console.log({ doc });
+        return res.json(doc.categories);
+      })
+      .catch((err) => {
+        console.error(err);
+        return res.status(400).end();
+      });
+  })
   .post(middleware.checkToken, (req, res) => {
     console.log({ category: req.body.category, user: req.params.user });
 
