@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { Card, CardText, Container, Button, Row } from "reactstrap";
+import { Card, Col, CardText, Container, Button, Row } from "reactstrap";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
+import { Summary } from "./Summary";
 import { ExpenseDetail } from "./ExpenseDetail";
 
 const actionTypes = {
@@ -10,9 +11,10 @@ const actionTypes = {
   fetchExpensesFail: "FETCH_EXPENSES_FAILURE",
   deleteExpense: "DELETE_EXPENSE",
   addExpense: "ADD_EXPENSE",
-  SET_AUTH: "SET_AUTH",
+  SET_AUTH: "SET_AUTH", // Consider https://www.npmjs.com/package/express-basic-auth [?]
   savingSuccess: "SAVING_SUCCESS",
   savingFailed: "SAVING_FAILED",
+  updateTotal: "UPDATE_TOTAL",
 };
 
 const initialState = {
@@ -23,6 +25,7 @@ const initialState = {
   authUser: null,
   expenseToAdd: null,
   idToDelete: null,
+  total: 0,
 };
 
 const reducer = (state, action) => {
@@ -53,7 +56,7 @@ const reducer = (state, action) => {
         hasError: false,
       };
     case actionTypes.fetchExpensesSuccess:
-      console.log({ payload: action.payload });
+      // console.log({ payload: action.payload });
       newState = {
         ...state,
         isFetching: false,
@@ -80,11 +83,18 @@ const reducer = (state, action) => {
         expenseToAdd: action.payload, // triggers effect
       };
 
+    case actionTypes.updateTotal:
+      return {
+        ...state,
+        total: action.payload,
+      };
+
     default:
       return state;
   }
 };
 
+// TODO Create a separate Revenues panel with the incoming money!
 // TODO Click on list item to edit it!
 const ExpensesPanel = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -187,6 +197,29 @@ const ExpensesPanel = (props) => {
       });
   }, [state.authToken, state.idToDelete]);
 
+  useEffect(() => {
+    fetch(`/expenses/${state.authUser}/total`, {
+      headers: {
+        Authorization: `Bearer ${state.authToken}`,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw res;
+        }
+      })
+      .then((resJson) => {
+        // console.log({ resJson });
+        dispatch({ type: actionTypes.updateTotal, payload: resJson.total });
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch({ type: actionTypes.fetchExpensesFail }); // TODO Anything that fails -- Just use one "failed request on server" action
+      });
+  }, [state.expenses, state.authUser, state.authToken]);
+
   const deleteExpense = (id) => {
     dispatch({ type: actionTypes.deleteExpense, payload: id });
   };
@@ -208,6 +241,14 @@ const ExpensesPanel = (props) => {
       ) : (
         <Container fluid="sm">
           <h2>Expenses</h2>
+          <Row>
+            <Col>Date</Col>
+            <Col>Amount</Col>
+            <Col>Category</Col>
+            <Col>To/From</Col>
+            <Col>Description</Col>
+            <Col></Col>
+          </Row>
           {state.expenses.length > 0 &&
             state.expenses.map((e) => (
               <Row key={e.id}>
@@ -240,6 +281,7 @@ const ExpensesPanel = (props) => {
             </Button>
             {/* TODO Add cancel button (and/or use Esc to cancel) */}
           </Row>
+          <Summary total={state.total} />
         </Container>
       )}
     </>

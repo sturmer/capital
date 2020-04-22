@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 
+// FIXME Can I use ${process.env.NODE_ENV} and deploy the right config?
 const { secret } = require("../config/config.dev");
 
 const checkToken = (req, res, next) => {

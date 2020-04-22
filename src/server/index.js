@@ -17,8 +17,34 @@ app.use(express.json());
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, "../client/build")));
 
-app.get("/expenses/:user", middleware.checkToken, (req, res) => {
+app.get("/expenses/:user/total", middleware.checkToken, (req, res) => {
+  // console.log({ user: req.params.user });
   User.findOne({ username: req.params.user })
+    .then((userDoc) => {
+      console.log({ userDoc });
+      Expense.find({ user: userDoc._id })
+        .then((docs) => {
+          // console.log({ docs });
+          const total = docs.reduce((acc, cur) => {
+            acc += Number(cur.amount);
+            return acc;
+          }, 0);
+          return res.send({ total });
+        })
+        .catch((err) => {
+          // FIXME There's some repeated code!
+          console.error(err);
+          return res.status(400).end();
+        });
+    })
+    .catch((userError) => {
+      console.error(userError);
+      return res.status(400).end();
+    });
+});
+
+app.get("/expenses/:user", middleware.checkToken, (req, res) => {
+  User.findOne({ username: req.params.user }) // TODO Can get it from the headers and do without the /:user
     .then((userDoc) => {
       Expense.find({ user: userDoc._id })
         .then((docs) => {
@@ -27,7 +53,7 @@ app.get("/expenses/:user", middleware.checkToken, (req, res) => {
             return {
               id: doc._id,
               date: moment(doc.date).format("YYYY-MM-DD"),
-              amount: doc.amount.$numberDecimal,
+              amount: doc.amount.toString(),
               category: doc.category,
               toFrom: doc.toFrom,
               description: doc.description,
@@ -38,12 +64,12 @@ app.get("/expenses/:user", middleware.checkToken, (req, res) => {
         .catch((err) => {
           // FIXME There's some repeated code!
           console.error(err);
-          return res.status(400);
+          return res.status(400).end();
         });
     })
     .catch((userError) => {
       console.error(userError);
-      return res.status(400);
+      return res.status(400).end();
     });
 });
 
@@ -76,13 +102,13 @@ app.post("/expenses", middleware.checkToken, (req, res) => {
         })
         .catch((err) => {
           console.error(err);
-          return res.status(400).json({});
+          return res.status(400).end();
         });
     })
 
     .catch((userFindErr) => {
       console.error(userFindErr);
-      return res.status(400).json({});
+      return res.status(400).end();
     });
 });
 
@@ -95,7 +121,7 @@ app.delete("/expenses/:expenseId", middleware.checkToken, (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(400).json({});
+      return res.status(400).end();
     });
 });
 
@@ -107,50 +133,49 @@ app.get("/categories/:user", middleware.checkToken, (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(400);
-    });
-
-  // res.json(categories[req.params.user]);
-});
-
-app.post("/categories/:user", middleware.checkToken, (req, res) => {
-  console.log({ category: req.body.category, user: req.params.user });
-
-  User.updateOne(
-    { username: req.params.user },
-    { $push: { categories: req.body.category } }
-  )
-    .then((result) => {
-      console.log({ result });
-
-      // It should be equivalent to do: User.findOne, and then on the result: result.push(category), result.save();
-      // Would that be less efficient?
-
-      return res.json({});
-    })
-    .catch((err) => {
-      console.error(err);
-      return res.status(400).json({});
+      return res.status(400).end();
     });
 });
 
-app.delete("/categories/:user", middleware.checkToken, (req, res) => {
-  console.log("Deleting...", { target: req.body.target });
-  User.findOne({ username: req.params.user })
-    .then((result) => {
-      console.log({ result });
-      const idx = result.categories.indexOf(req.body.target);
-      if (idx > -1) {
-        result.categories.splice(idx, 1);
-      }
-      result.save();
-      return res.json({ updatedCategories: result.categories });
-    })
-    .catch((err) => {
-      console.error(err);
-      return res.status(400).json({});
-    });
-});
+app
+  .route("/categories/:user")
+  .post(middleware.checkToken, (req, res) => {
+    console.log({ category: req.body.category, user: req.params.user });
+
+    User.updateOne(
+      { username: req.params.user },
+      { $push: { categories: req.body.category } }
+    )
+      .then((result) => {
+        console.log({ result });
+
+        // It should be equivalent to do: User.findOne, and then on the result: result.push(category), result.save();
+        // Would that be less efficient?
+
+        return res.end();
+      })
+      .catch((err) => {
+        console.error(err);
+        return res.status(400).end();
+      });
+  })
+  .delete(middleware.checkToken, (req, res) => {
+    console.log("Deleting...", { target: req.body.target });
+    User.findOne({ username: req.params.user })
+      .then((result) => {
+        console.log({ result });
+        const idx = result.categories.indexOf(req.body.target);
+        if (idx > -1) {
+          result.categories.splice(idx, 1);
+        }
+        result.save();
+        return res.json({ updatedCategories: result.categories });
+      })
+      .catch((err) => {
+        console.error(err);
+        return res.status(400).end();
+      });
+  });
 
 app.post("/login", (req, res) => {
   const username = req.body.username;
@@ -218,11 +243,11 @@ app.post("/signup", (req, res) => {
     .save()
     .then((doc) => {
       console.log({ doc });
-      return res.status(200).json({});
+      return res.end();
     })
     .catch((err) => {
       console.error(err);
-      return res.status(400).json({});
+      return res.status(400).end();
     });
 });
 
