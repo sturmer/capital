@@ -125,13 +125,16 @@ const ExpensesPanel = (props) => {
     if (!state.expenseToAdd) {
       return;
     }
-    fetch(`/expenses/${state.authUser}`, {
+    fetch("/expenses", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${state.authToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ expense: state.expenseToAdd }),
+      body: JSON.stringify({
+        user: state.authUser,
+        expense: state.expenseToAdd,
+      }),
     })
       .then((res) => {
         console.log({ res });

@@ -18,12 +18,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "../client/build")));
 
 app.get("/expenses/:user", middleware.checkToken, (req, res) => {
-  // console.log("retrieving expenses from DB...", {
-  //   user: req.params.user,
-  //   expenses: expenses[req.params.user],
-  // });
-  // res.json(expenses[req.params.user]);
-
   User.findOne({ username: req.params.user })
     .then((userDoc) => {
       Expense.find({ user: userDoc._id })
@@ -53,15 +47,14 @@ app.get("/expenses/:user", middleware.checkToken, (req, res) => {
     });
 });
 
-// TODO Change :user to :expenseId, makes more sense
 // TODO Switch to GraphQL
-app.post("/expenses/:user", middleware.checkToken, (req, res) => {
+app.post("/expenses", middleware.checkToken, (req, res) => {
   console.log("server: adding expense...", {
     expense: req.body.expense,
-    user: req.params.user,
+    user: req.body.user,
   });
 
-  User.findOne({ username: req.params.user })
+  User.findOne({ username: req.body.user })
     .then((userDoc) => {
       // Can the user be non-existing? No, because we get it from the auth
       // state of the client component.
