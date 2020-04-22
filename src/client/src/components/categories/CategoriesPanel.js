@@ -2,7 +2,7 @@ import React, { useState, useEffect, useReducer } from "react";
 import { Button, Container, Row } from "reactstrap";
 
 import { NewCategoryForm } from "./NewCategoryForm";
-import { Category } from "./Category";
+import { Category } from "./CategoryDetail";
 
 const actionTypes = {
   fetchCategories: "FETCH_CATEGORIES_REQ",
@@ -51,8 +51,6 @@ const reducer = (state, action) => {
       };
 
     case actionTypes.deleteCategory:
-      // NOTE: If I put `categories` first, then `...state`, the categories
-      // property will be overridden by the current state!
       newState = {
         ...state,
         categories: state.categories.filter((c) => c !== action.payload),
@@ -122,7 +120,7 @@ const reducer = (state, action) => {
   }
 };
 
-const CategoryPanel = (props) => {
+const CategoriesPanel = (props) => {
   const [showForm, setShowForm] = useState(false);
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -201,4 +199,4 @@ const CategoryPanel = (props) => {
   );
 };
 
-export { CategoryPanel };
+export { CategoriesPanel };

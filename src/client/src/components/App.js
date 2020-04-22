@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Route, Switch } from "react-router-dom";
 
 import "./App.css";
-import { CategoryPanel } from "./categories/CategoryPanel";
-import { MonthHistoryPanel } from "./expenses/MonthHistoryPanel";
+import { CategoriesPanel } from "./categories/CategoriesPanel";
+import { ExpensesPanel } from "./expenses/ExpensesPanel";
 import { Navigation } from "./common/Navigation";
 import { LoginForm } from "./login/LoginForm";
 import { ProtectedRoute } from "./common/ProtectedRoute";
@@ -26,11 +26,11 @@ const App = () => {
       <Switch>
         {/* TODO make path '/' point to /expenses */}
         <ProtectedRoute exact path="/" authState={state}>
-          <MonthHistoryPanel authUser={state.user} authToken={state.token} />
+          <ExpensesPanel authUser={state.user} authToken={state.token} />
         </ProtectedRoute>
 
         <ProtectedRoute path="/categories" authState={state}>
-          <CategoryPanel authUser={state.user} authToken={state.token} />
+          <CategoriesPanel authUser={state.user} authToken={state.token} />
         </ProtectedRoute>
         <Route
           path="/login"

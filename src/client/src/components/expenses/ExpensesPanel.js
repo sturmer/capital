@@ -11,20 +11,34 @@ const actionTypes = {
   deleteExpense: "DELETE_EXPENSE",
   addExpense: "ADD_EXPENSE",
   SET_AUTH: "SET_AUTH",
+  savingSuccess: "SAVING_SUCCESS",
+  savingFailed: "SAVING_FAILED",
 };
 
 const initialState = {
   expenses: [],
   isFetching: false,
-  isSaving: false,
   hasError: false,
   authToken: null,
   authUser: null,
+  expenseToAdd: null,
 };
 
 const reducer = (state, action) => {
   let newState = null;
   switch (action.type) {
+    case actionTypes.savingSuccess:
+      return {
+        ...state,
+        expenses: [...state.expenses, action.payload],
+        expenseToAdd: null,
+      };
+    case actionTypes.savingFailed:
+      return {
+        ...state,
+        hasError: true,
+        expenseToAdd: null,
+      };
     case actionTypes.SET_AUTH:
       return {
         ...state,
@@ -59,41 +73,10 @@ const reducer = (state, action) => {
 
     case actionTypes.addExpense:
       console.log("adding expense...");
-
-      // This fetch needs fixing.
-      fetch(`/expenses/${state.authUser}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${state.authToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ expense: action.payload }),
-      })
-        .then((res) => {
-          console.log({ res });
-          if (res.status === 200) {
-            return res.json();
-          } else {
-            throw new Error(res.error);
-          }
-        })
-        .then((resJson) => {
-          console.log("...expense saved", { resJson });
-          const newExpense = { id: resJson.expenseId, ...action.payload };
-          newState = {
-            ...state,
-            expenses: [...state.expenses, newExpense],
-          };
-          // TODO Remove this whole .then? (also in delete category)
-          return newState;
-        })
-        .catch((err) => {
-          console.error(err);
-          return state;
-        });
-
-      // FIXME We need to wait for the server to finish before saving the state.
-      return state;
+      return {
+        ...state,
+        expenseToAdd: action.payload, // triggers effect
+      };
 
     default:
       return state;
@@ -101,7 +84,7 @@ const reducer = (state, action) => {
 };
 
 // TODO Click on list item to edit it!
-const MonthHistoryPanel = (props) => {
+const ExpensesPanel = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [showForm, setShowForm] = useState(false);
 
@@ -136,6 +119,46 @@ const MonthHistoryPanel = (props) => {
       });
   }, [props.authUser, props.authToken]);
 
+  useEffect(() => {
+    if (!state.expenseToAdd) {
+      return;
+    }
+    fetch(`/expenses/${state.authUser}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${state.authToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ expense: state.expenseToAdd }),
+    })
+      .then((res) => {
+        console.log({ res });
+        if (res.status === 200) {
+          return res.json();
+        } else {
+          throw new Error(res.error);
+        }
+      })
+      .then((resJson) => {
+        console.log("...expense saved", { resJson });
+        const persistedExpense = {
+          id: resJson.expenseId,
+          ...state.expenseToAdd,
+        };
+
+        // TODO Remove this whole .then? (also in delete category)
+
+        dispatch({
+          type: actionTypes.savingSuccess,
+          payload: persistedExpense,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch({ type: actionTypes.savingFailed });
+      });
+  }, [state.authUser, state.authToken, state.expenseToAdd]);
+
   const deleteExpense = (id) => {
     // TODO Write the changed expenses to file
     dispatch({ type: actionTypes.deleteExpense, payload: id });
@@ -146,6 +169,10 @@ const MonthHistoryPanel = (props) => {
       {state.isFetching ? (
         <Card>
           <CardText>LOADING...</CardText>
+        </Card>
+      ) : state.expenseToAdd ? (
+        <Card>
+          <CardText>SAVING...</CardText>
         </Card>
       ) : state.hasError ? (
         <Card>
@@ -192,4 +219,4 @@ const MonthHistoryPanel = (props) => {
   );
 };
 
-export { MonthHistoryPanel };
+export { ExpensesPanel };

@@ -1,7 +1,7 @@
 import React from "react";
 import { Col } from "reactstrap";
 
-const Category = (props) => {
+const CategoryDetail = (props) => {
   return (
     <>
       <Col>{props.name}</Col>
@@ -9,4 +9,4 @@ const Category = (props) => {
   );
 };
 
-export { Category };
+export { CategoryDetail as Category };
