@@ -1,14 +1,4 @@
 import React, { useState } from "react";
-import {
-  Card,
-  Container,
-  Button,
-  Form,
-  FormGroup,
-  Col,
-  Input,
-  Label,
-} from "reactstrap";
 import { useHistory } from "react-router-dom";
 
 const LoginForm = (props) => {
@@ -65,49 +55,47 @@ const LoginForm = (props) => {
   };
 
   return (
-    <Container>
-      <Card>
-        <Form onSubmit={handleUserLogin}>
-          <FormGroup>
-            <Col sm={10}>
-              <Label for="email">E-mail</Label>
-            </Col>
-            <Col sm={10}>
-              <Input
+    <div className="container">
+      <div className="card">
+        <form onSubmit={handleUserLogin}>
+          <div className="form-group">
+            <div className="col" sm={10}>
+              <label htmlFor="email">E-mail</label>
+            </div>
+            <div className="col" sm={10}>
+              <input
+                className="form-control"
                 type="text"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-              ></Input>
-            </Col>
-          </FormGroup>
+              ></input>
+            </div>
+          </div>
 
-          <FormGroup>
-            <Col sm={10}>
-              <Label for="password">Password</Label>
-            </Col>
-            <Col sm={10}>
-              <Input
+          <div className="form-group">
+            <div className="col" sm={10}>
+              <label htmlFor="password">Password</label>
+            </div>
+            <div className="col" sm={10}>
+              <input
+                className="form-control"
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-              ></Input>
-            </Col>
-          </FormGroup>
+              ></input>
+            </div>
+          </div>
 
-          <Col sm={10}>
-            {/* <Button color="primary" disabled={formData?.loading ?? false}> */}
-            <Button color="primary">
-              {/* TODO change the isAuthenticated state with the result*/}
-              Log In
-            </Button>
-          </Col>
-        </Form>
-      </Card>
-    </Container>
+          <div className="col" sm={10}>
+            <button className="btn btn-primary">Log In</button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

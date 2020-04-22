@@ -31,7 +31,7 @@ const NewCategoryForm = (props) => {
           onChange={handleCategoryChange}
         ></input>
       </div>
-      <button className="btn btn-primary">Add</button>
+      <button className="btn btn-secondary">Add</button>
     </form>
   );
 };
