@@ -3,7 +3,6 @@ import { Card, Col, CardText, Container, Button, Row } from "reactstrap";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
 import { Summary } from "./Summary";
-import { ExpenseDetail } from "./ExpenseDetail";
 
 const actionTypes = {
   fetchExpenses: "FETCH_EXPENSES_REQUEST",
@@ -252,13 +251,11 @@ const ExpensesPanel = (props) => {
           {state.expenses.length > 0 &&
             state.expenses.map((e) => (
               <Row key={e.id}>
-                <ExpenseDetail
-                  date={e.date}
-                  amount={e.amount}
-                  category={e.category}
-                  toFrom={e.toFrom}
-                  description={e.description}
-                />
+                <Col>{e.date}</Col>
+                <Col>{e.amount}</Col>
+                <Col>{e.category}</Col>
+                <Col>{e.toFrom}</Col>
+                <Col>{e.description}</Col>
                 <Button color="warning" onClick={() => deleteExpense(e.id)}>
                   Delete
                 </Button>

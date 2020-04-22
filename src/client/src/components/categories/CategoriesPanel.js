@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { Button, Container, Row } from "reactstrap";
+import { Col, Button, Container, Row } from "reactstrap";
 
 import { NewCategoryForm } from "./NewCategoryForm";
-import { Category } from "./CategoryDetail";
 
 const actionTypes = {
   fetchCategories: "FETCH_CATEGORIES_REQ",
@@ -173,7 +172,7 @@ const CategoriesPanel = (props) => {
         state.categories &&
         state.categories.map((c) => (
           <Row key={c}>
-            <Category name={c} />
+            <Col>{c}</Col>
             <Button color="warning" onClick={() => deleteCategory(c)}>
               Remove
             </Button>
