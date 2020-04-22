@@ -1,20 +1,12 @@
 import React, { useState, useEffect, useReducer } from "react";
+// TODO Do without reactstrap
 import { Card, Col, CardText, Container, Button, Row } from "reactstrap";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
 import { Summary } from "./Summary";
-
-const actionTypes = {
-  fetchExpenses: "FETCH_EXPENSES_REQUEST",
-  fetchExpensesSuccess: "FETCH_EXPENSES_SUCCESS",
-  fetchExpensesFail: "FETCH_EXPENSES_FAILURE",
-  deleteExpense: "DELETE_EXPENSE",
-  addExpense: "ADD_EXPENSE",
-  SET_AUTH: "SET_AUTH", // Consider https://www.npmjs.com/package/express-basic-auth [?]
-  savingSuccess: "SAVING_SUCCESS",
-  savingFailed: "SAVING_FAILED",
-  updateTotal: "UPDATE_TOTAL",
-};
+import { reducer } from "./reducer";
+import { actionTypes } from "./actionTypes";
+import { setAuthAction } from "./actions";
 
 const initialState = {
   expenses: [],
@@ -27,72 +19,6 @@ const initialState = {
   total: 0,
 };
 
-const reducer = (state, action) => {
-  let newState = null;
-  switch (action.type) {
-    case actionTypes.savingSuccess:
-      return {
-        ...state,
-        expenses: [...state.expenses, action.payload],
-        expenseToAdd: null,
-      };
-    case actionTypes.savingFailed:
-      return {
-        ...state,
-        hasError: true,
-        expenseToAdd: null,
-      };
-    case actionTypes.SET_AUTH:
-      return {
-        ...state,
-        authUser: action.payload.user,
-        authToken: action.payload.token,
-      };
-    case actionTypes.fetchExpenses:
-      return {
-        ...state,
-        isFetching: true,
-        hasError: false,
-      };
-    case actionTypes.fetchExpensesSuccess:
-      // console.log({ payload: action.payload });
-      newState = {
-        ...state,
-        isFetching: false,
-        expenses: action.payload,
-      };
-      return newState;
-    case actionTypes.fetchExpensesFail:
-      return {
-        ...state,
-        hasError: true,
-        isFetching: false,
-      };
-    case actionTypes.deleteExpense:
-      return {
-        ...state,
-        expenses: state.expenses.filter((e) => e.id !== action.payload),
-        idToDelete: action.payload,
-      };
-
-    case actionTypes.addExpense:
-      console.log("adding expense...");
-      return {
-        ...state,
-        expenseToAdd: action.payload, // triggers effect
-      };
-
-    case actionTypes.updateTotal:
-      return {
-        ...state,
-        total: action.payload,
-      };
-
-    default:
-      return state;
-  }
-};
-
 // TODO Create a separate Revenues panel with the incoming money!
 // TODO Click on list item to edit it!
 const ExpensesPanel = (props) => {
@@ -100,10 +26,7 @@ const ExpensesPanel = (props) => {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    dispatch({
-      type: actionTypes.SET_AUTH,
-      payload: { user: props.authUser, token: props.authToken },
-    });
+    dispatch(setAuthAction(props.authUser, props.authToken));
 
     dispatch({ type: actionTypes.fetchExpenses });
 
