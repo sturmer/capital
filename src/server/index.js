@@ -17,8 +17,12 @@ require("./database");
 const app = express();
 app.use(express.json());
 
+const publicPath = path.join(__dirname, "../../public");
+
 // Serve the static files from the React app when in production
-app.use(express.static(path.join(__dirname, "../build")));
+app.use(express.static(publicPath));
+
+// I think
 
 app.get(
   "/expenses/:user/total",
@@ -219,7 +223,7 @@ app.post("/signup", (req, res) => {
 
 // Handles any requests that don't match the ones above
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname + "/../../public/index.html"));
+  res.sendFile(path.join(publicPath, "/index.html"));
 });
 
 const port = process.env.PORT || 5000;
