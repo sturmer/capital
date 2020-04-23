@@ -15,6 +15,7 @@ const initialState = {
   expenseToAdd: null,
   idToDelete: null,
   total: 0,
+  totalsByCategory: {},
 };
 
 // TODO Create a separate Revenues panel with the incoming money!
@@ -23,6 +24,7 @@ const ExpensesPanel = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [showForm, setShowForm] = useState(false);
 
+  //
   useEffect(() => {
     dispatch(setAuthAction(props.authUser, props.authToken));
 
@@ -45,6 +47,7 @@ const ExpensesPanel = (props) => {
           payload: resJson,
         });
       })
+
       .catch((error) => {
         console.log(error);
         dispatch({ type: actionTypes.fetchExpensesFail });
@@ -117,6 +120,7 @@ const ExpensesPanel = (props) => {
       });
   }, [state.authToken, state.idToDelete]);
 
+  // Update Totals
   useEffect(() => {
     fetch(`/expenses/${state.authUser}/total`, {
       headers: {
@@ -132,7 +136,7 @@ const ExpensesPanel = (props) => {
       })
       .then((resJson) => {
         // console.log({ resJson });
-        dispatch({ type: actionTypes.updateTotal, payload: resJson.total });
+        dispatch({ type: actionTypes.updateTotal, payload: resJson });
       })
       .catch((err) => {
         console.error(err);
@@ -216,7 +220,10 @@ const ExpensesPanel = (props) => {
             New Expense
           </button>
 
-          <Summary total={state.total} />
+          <Summary
+            total={state.total}
+            totalsByCategory={state.totalsByCategory}
+          />
         </>
       )}
     </>

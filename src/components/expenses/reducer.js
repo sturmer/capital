@@ -28,7 +28,7 @@ const reducer = (state, action) => {
         hasError: false,
       };
     case actionTypes.fetchExpensesSuccess:
-      // console.log({ payload: action.payload });
+      console.log({ expenses: action.payload });
       newState = {
         ...state,
         isFetching: false,
@@ -58,7 +58,8 @@ const reducer = (state, action) => {
     case actionTypes.updateTotal:
       return {
         ...state,
-        total: action.payload,
+        total: action.payload.total,
+        totalsByCategory: action.payload.totalsByCategoryJson,
       };
 
     default:

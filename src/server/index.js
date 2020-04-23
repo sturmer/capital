@@ -2,10 +2,11 @@ const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const moment = require("moment");
 
 const { secret } = require("./config/config.dev");
 const middleware = require("./middlewares/authMiddleware");
+const summaryMiddleware = require("./middlewares/summaryMiddleware");
+const expenseGetter = require("./middlewares/expenseGetter");
 const { Expense } = require("./models/Expense");
 const { User } = require("./models/User");
 
@@ -17,61 +18,24 @@ app.use(express.json());
 // Serve the static files from the React app
 app.use(express.static(path.join(__dirname, "../client/build")));
 
-app.get("/expenses/:user/total", middleware.checkToken, (req, res) => {
-  // console.log({ user: req.params.user });
-  User.findOne({ username: req.params.user })
-    .then((userDoc) => {
-      console.log({ userDoc });
-      Expense.find({ user: userDoc._id })
-        .then((docs) => {
-          // console.log({ docs });
-          const total = docs.reduce((acc, cur) => {
-            acc += Number(cur.amount);
-            return acc;
-          }, 0);
-          return res.send({ total });
-        })
-        .catch((err) => {
-          // FIXME There's some repeated code!
-          console.error(err);
-          return res.status(400).end();
-        });
-    })
-    .catch((userError) => {
-      console.error(userError);
-      return res.status(400).end();
+app.get(
+  "/expenses/:user/total",
+  [summaryMiddleware.computeSummary, middleware.checkToken],
+  (req, res) => {
+    res.send({
+      total: req.total,
+      totalsByCategoryJson: req.totalsByCategoryJson,
     });
-});
+  }
+);
 
-app.get("/expenses/:user", middleware.checkToken, (req, res) => {
-  User.findOne({ username: req.params.user }) // TODO Can get it from the headers and do without the /:user
-    .then((userDoc) => {
-      Expense.find({ user: userDoc._id })
-        .then((docs) => {
-          // console.log({ docs });
-          const result = docs.map((doc) => {
-            return {
-              id: doc._id,
-              date: moment(doc.date).format("YYYY-MM-DD"),
-              amount: doc.amount.toString(),
-              category: doc.category,
-              toFrom: doc.toFrom,
-              description: doc.description,
-            };
-          });
-          return res.json(result);
-        })
-        .catch((err) => {
-          // FIXME There's some repeated code!
-          console.error(err);
-          return res.status(400).end();
-        });
-    })
-    .catch((userError) => {
-      console.error(userError);
-      return res.status(400).end();
-    });
-});
+app.get(
+  "/expenses/:user",
+  [expenseGetter.execute, middleware.checkToken],
+  (req, res) => {
+    return res.send(req.result);
+  }
+);
 
 // TODO Switch to GraphQL
 app.post("/expenses", middleware.checkToken, (req, res) => {
