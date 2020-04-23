@@ -7,6 +7,7 @@ const { secret } = require("./config/config.dev");
 const middleware = require("./middlewares/authMiddleware");
 const summaryMiddleware = require("./middlewares/summaryMiddleware");
 const expenseGetter = require("./middlewares/expenseGetter");
+const userGetter = require("./middlewares/userGetter");
 const { Expense } = require("./models/Expense");
 const { User } = require("./models/User");
 
@@ -31,7 +32,7 @@ app.get(
 
 app.get(
   "/expenses/:user",
-  [expenseGetter.execute, middleware.checkToken],
+  [middleware.checkToken, userGetter.execute, expenseGetter.execute],
   (req, res) => {
     return res.send(req.result);
   }
@@ -44,6 +45,7 @@ app.post("/expenses", middleware.checkToken, (req, res) => {
     user: req.body.user,
   });
 
+  // TODO Put compute logic in middlewares
   User.findOne({ username: req.body.user })
     .then((userDoc) => {
       // Can the user be non-existing? No, because we get it from the auth

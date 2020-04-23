@@ -4,6 +4,12 @@ const { User } = require("../models/User");
 const computeSummary = (req, res, next) => {
   User.findOne({ username: req.params.user })
     .then((userDoc) => {
+      if (!userDoc) {
+        return res.send({
+          success: false,
+          message: "error retrieving user",
+        });
+      }
       console.log({ userDoc });
       const totalsByCategory = new Map();
       userDoc.categories.forEach((cat) => {

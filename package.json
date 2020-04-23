@@ -22,7 +22,7 @@
   "scripts": {
     "start": "node src/server/index.js",
     "dev": "NODE_ENV=dev nodemon src/server/index.js",
-    "heroku-postbuild": "cd src/client && npm install --only=dev && npm install && npm run build",
+    "heroku-postbuild": "npm install --only=dev && npm install && npm run build",
     "startClient": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

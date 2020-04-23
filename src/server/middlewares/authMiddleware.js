@@ -17,7 +17,7 @@ const checkToken = (req, res, next) => {
     token = token.slice(7, token.length);
   }
 
-  console.log({ middleware: "authMiddleware", token, secret });
+  // console.log({ middleware: "authMiddleware", token, secret });
   if (token) {
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
@@ -27,7 +27,6 @@ const checkToken = (req, res, next) => {
           message: "Token is not valid",
         });
       } else {
-        // console.log("good to go!");
         req.decoded = decoded;
         next();
       }
