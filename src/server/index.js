@@ -218,15 +218,9 @@ app.post("/signup", (req, res) => {
 });
 
 // Handles any requests that don't match the ones above
-if (process.env.NODE_ENV === "production") {
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname + "/../../build/index.html"));
-  });
-} else {
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname + "/../../public/index.html"));
-  });
-}
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/../../public/index.html"));
+});
 
 const port = process.env.PORT || 5000;
 app.listen(port);
