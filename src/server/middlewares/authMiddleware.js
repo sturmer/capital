@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
-// FIXME Can I use ${process.env.NODE_ENV} and deploy the right config?
-const { secret } = require("../config/config.dev");
+dotenv.config();
 
 const checkToken = (req, res, next) => {
   let token = req.headers["x-access-token"] || req.headers["authorization"];
@@ -19,7 +19,7 @@ const checkToken = (req, res, next) => {
 
   // console.log({ middleware: "authMiddleware", token, secret });
   if (token) {
-    jwt.verify(token, secret, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {
         console.error("authentication problem...");
         return res.json({

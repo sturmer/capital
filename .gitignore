@@ -24,4 +24,6 @@ yarn-error.log*
 
 /src/client/node_modules
 /.vscode
-/src/server/config/config.dev.js
+
+.env
+/build

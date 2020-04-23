@@ -2,8 +2,8 @@ const express = require("express");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const dotenv = require("dotenv");
 
-const { secret } = require("./config/config.dev");
 const middleware = require("./middlewares/authMiddleware");
 const summaryMiddleware = require("./middlewares/summaryMiddleware");
 const expenseGetter = require("./middlewares/expenseGetter");
@@ -11,13 +11,14 @@ const userGetter = require("./middlewares/userGetter");
 const { Expense } = require("./models/Expense");
 const { User } = require("./models/User");
 
+dotenv.config();
 require("./database");
 
 const app = express();
 app.use(express.json());
 
-// Serve the static files from the React app
-app.use(express.static(path.join(__dirname, "../client/build")));
+// Serve the static files from the React app when in production
+app.use(express.static(path.join(__dirname, "../build")));
 
 app.get(
   "/expenses/:user/total",
@@ -156,7 +157,7 @@ app.post("/login", (req, res) => {
         if (bcrypt.compareSync(clearTextPassword, doc.hash)) {
           console.log("password correct");
           // Passwords match
-          const token = jwt.sign({ username }, secret, {
+          const token = jwt.sign({ username }, process.env.JWT_SECRET, {
             expiresIn: "24h", // expires in 24 hours
           });
 
@@ -217,9 +218,15 @@ app.post("/signup", (req, res) => {
 });
 
 // Handles any requests that don't match the ones above
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname + "/../client/src/index.js"));
-});
+if (process.env.NODE_ENV === "production") {
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname + "/../build/index.html"));
+  });
+} else {
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname + "/../public/index.html"));
+  });
+}
 
 const port = process.env.PORT || 5000;
 app.listen(port);

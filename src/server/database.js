@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
-const { mongoDbPassword } = require("./config/config.dev");
+const dotenv = require("dotenv");
 
-const uri = `mongodb+srv://develop:${mongoDbPassword}@cluster0-lnwlc.mongodb.net/test?retryWrites=true&w=majority`;
+dotenv.config();
+const uri = `mongodb+srv://develop:${process.env.MONGO_DB_PASSWORD}@cluster0-lnwlc.mongodb.net/test?retryWrites=true&w=majority`;
 
 class Database {
   constructor() {
@@ -21,5 +22,3 @@ class Database {
 }
 
 module.exports = new Database();
-
-// ("mongodb+srv://develop:<password>@cluster0-lnwlc.mongodb.net/test?retryWrites=true&w=majority");
