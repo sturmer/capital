@@ -19,7 +19,12 @@ app.use(express.json());
 
 app.get(
   "/expenses/:user/total",
-  [middleware.checkToken, userGetter.execute, summaryMiddleware.computeSummary],
+  [
+    middleware.checkToken,
+    userGetter.execute,
+    expenseGetter.execute,
+    summaryMiddleware.computeSummary,
+  ],
   (req, res) => {
     console.log("Calling total route...");
     res.send({
