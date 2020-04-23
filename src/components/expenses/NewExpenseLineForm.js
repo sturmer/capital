@@ -44,7 +44,7 @@ const NewExpenseLineForm = (props) => {
         <input
           className="form-control"
           type="text"
-          name="expenseLineDate"
+          name="date"
           value={formData.date}
           onChange={handleInputChange}
         ></input>
@@ -55,7 +55,7 @@ const NewExpenseLineForm = (props) => {
         <input
           className="form-control"
           type="text"
-          name="expenseLineAmount"
+          name="amount"
           value={formData.amount}
           onChange={handleInputChange}
         ></input>
@@ -66,7 +66,7 @@ const NewExpenseLineForm = (props) => {
         <input
           className="form-control"
           type="text"
-          name="expenseLineCategory"
+          name="category"
           value={formData.category}
           onChange={handleInputChange}
         ></input>
@@ -77,7 +77,7 @@ const NewExpenseLineForm = (props) => {
         <input
           className="form-control"
           type="text"
-          name="expenseLineToFrom"
+          name="toFrom"
           value={formData.toFrom}
           onChange={handleInputChange}
         ></input>
@@ -88,7 +88,7 @@ const NewExpenseLineForm = (props) => {
         <input
           className="form-control"
           type="text"
-          name="expenseLineDescription"
+          name="description"
           value={formData.description}
           onChange={handleInputChange}
         ></input>
