@@ -3,7 +3,7 @@ const moment = require("moment");
 const { Expense } = require("../models/Expense");
 
 const execute = (req, res, next) => {
-  console.log({ userId: req.userId });
+  // console.log({ userId: req.userId });
   Expense.find({ user: req.userId })
     .then((docs) => {
       // console.log({ docs });
@@ -22,7 +22,7 @@ const execute = (req, res, next) => {
           return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
         });
 
-      console.log({ result });
+      // console.log({ result });
       req.result = result;
       next();
     })

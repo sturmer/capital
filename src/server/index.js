@@ -26,10 +26,10 @@ app.get(
     summaryMiddleware.computeSummary,
   ],
   (req, res) => {
-    console.log("Calling total route...");
     res.send({
       total: req.total,
-      totalsByCategoryJson: req.totalsByCategoryJson,
+      totalsByCategory: req.totalsByCategory,
+      totalsByMonth: req.totalsByMonth,
     });
   }
 );
@@ -227,7 +227,7 @@ const publicPath = path.join(
   "..",
   process.env.NODE_ENV === "production" ? "build" : "public"
 );
-console.log({ publicPath });
+// console.log({ publicPath });
 app.use(express.static(publicPath));
 app.get("*", (req, res) => {
   res.sendFile(path.join(publicPath, "index.html"));

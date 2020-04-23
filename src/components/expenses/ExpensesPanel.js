@@ -14,6 +14,7 @@ const initialState = {
   idToDelete: null,
   total: 0,
   totalsByCategory: {},
+  totalsByMonth: {},
 };
 
 // TODO (important) authToken and authUser should be stored in cookies.
@@ -59,6 +60,11 @@ const ExpensesPanel = (props) => {
     if (!state.expenseToAdd) {
       return;
     }
+
+    // FIXME When adding a new expense in an earlier date, it appears at the end.
+    // On refresh, it appears at the right place.
+    // Desired behavior: I expect to fetch all and display them using sort; this is
+    // not the case.
     fetch("/expenses", {
       method: "POST",
       headers: {
@@ -124,7 +130,6 @@ const ExpensesPanel = (props) => {
 
   // Update Totals.
   useEffect(() => {
-    console.log("Calling total route...");
     fetch(`/expenses/${props.authUser}/total`, {
       headers: {
         Authorization: `Bearer ${props.authToken}`,
@@ -138,7 +143,7 @@ const ExpensesPanel = (props) => {
         }
       })
       .then((resJson) => {
-        // console.log({ resJson });
+        console.log({ totals: resJson });
         dispatch({ type: actionTypes.updateTotal, payload: resJson });
       })
       .catch((err) => {
@@ -222,6 +227,7 @@ const ExpensesPanel = (props) => {
           <Summary
             total={state.total}
             totalsByCategory={state.totalsByCategory}
+            totalsByMonth={state.totalsByMonth}
           />
         </>
       )}

@@ -1,31 +1,41 @@
+const moment = require("moment");
+
 const computeSummary = (req, res, next) => {
   const expenses = req.result;
 
   const userCategories = expenses.map((e) => e.category).filter((cat) => !!cat);
-  const totalsByCategory = new Map();
-  userCategories.forEach((cat) => {
-    totalsByCategory.set(cat, 0);
+  console.log({ userCategories });
+
+  const totalsByMonth = {};
+  expenses.forEach((e) => {
+    const monthWithYear = moment(e.date).format("MMMM YYYY");
+    if (!(monthWithYear in totalsByMonth)) {
+      totalsByMonth[`${monthWithYear}`] = 0;
+    }
+    totalsByMonth[`${monthWithYear}`] += Number(e.amount);
   });
-  totalsByCategory.set("Other", 0);
 
   let total = 0;
+
+  // TODO Use plain object also for totalsByCategory!
+  const totalsByCategory = {};
+  userCategories.forEach((cat) => {
+    totalsByCategory[`${cat}`] = 0;
+  });
+  totalsByCategory["Other"] = 0;
 
   expenses.forEach((d) => {
     total += Number(d.amount);
     const category = d.category || "Other";
-    const currentAmount = totalsByCategory.get(category);
-    totalsByCategory.set(category, currentAmount + Number(d.amount));
+    totalsByCategory[`${category}`] += Number(d.amount);
   });
 
-  const totalsByCategoryJson = {};
-  totalsByCategory.forEach((v, k) => {
-    totalsByCategoryJson[k] = v;
-  });
-
-  console.log({ totalsByCategoryJson });
+  console.log({ totalsByCategory });
+  console.log({ totalsByMonth });
 
   req.total = total;
-  req.totalsByCategoryJson = totalsByCategoryJson;
+  req.totalsByCategory = totalsByCategory;
+  req.totalsByMonth = totalsByMonth;
   next();
 };
 
