@@ -25,15 +25,7 @@ const NewExpenseLineForm = (props) => {
     // Hide form
     props.handleVisibility(false);
 
-    // const {
-    //   date,
-    //   amount,
-    //   category,
-    //   toFrom,
-    //   description,
-    // } = state.formData;
-    // const newLine =
-    // console.log("dispatching new line", { newLine });
+    // console.log("dispatching new line", { formData });
     props.dispatch({ type: props.actionType, payload: formData });
   };
 
