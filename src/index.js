@@ -1,3 +1,4 @@
+// NOTE: This file can't be renamed (https://create-react-app.dev/docs/folder-structure)
 import React from "react";
 import { render } from "react-dom";
 import "./index.css";
