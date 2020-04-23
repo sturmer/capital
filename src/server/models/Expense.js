@@ -9,7 +9,7 @@ const expenseSchema = new mongoose.Schema(
     toFrom: String,
     description: String,
   },
-  { autoCreate: process.env.NODE_ENV === "dev" }
+  { autoCreate: process.env.NODE_ENV === "development" }
 );
 
 const Expense = mongoose.model("Expense", expenseSchema);

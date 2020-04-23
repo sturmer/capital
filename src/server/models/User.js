@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema(
     hash: { type: String, required: true },
     categories: { type: Array },
   },
-  { autoCreate: process.env.NODE_ENV === "dev" }
+  { autoCreate: process.env.NODE_ENV === "development" }
 );
 
 console.log("environment", { env: process.env.NODE_ENV });
