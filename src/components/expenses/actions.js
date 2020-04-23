@@ -28,6 +28,9 @@ const setAuthAction = (user, token) => {
 // dispatch({ type: actionTypes.updateTotal, payload: resJson.total });
 
 // dispatch({ type: actionTypes.fetchExpensesFail }); // TODO Anything that fails -- Just use one "failed request on server" action
-// dispatch({ type: actionTypes.deleteExpense, payload: id });
 
-export { setAuthAction };
+const deleteExpenseAction = (id) => {
+  return { type: actionTypes.deleteExpense, payload: id };
+};
+
+export { setAuthAction, deleteExpenseAction };

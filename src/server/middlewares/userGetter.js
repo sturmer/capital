@@ -11,6 +11,7 @@ const execute = (req, res, next) => {
       }
       console.log({ userDoc });
       req.userId = userDoc._id;
+      req.categories = userDoc.categories;
       next();
     })
     .catch((userError) => {

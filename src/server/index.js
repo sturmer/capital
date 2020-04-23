@@ -19,8 +19,9 @@ app.use(express.json());
 
 app.get(
   "/expenses/:user/total",
-  [summaryMiddleware.computeSummary, middleware.checkToken],
+  [middleware.checkToken, userGetter.execute, summaryMiddleware.computeSummary],
   (req, res) => {
+    console.log("Calling total route...");
     res.send({
       total: req.total,
       totalsByCategoryJson: req.totalsByCategoryJson,

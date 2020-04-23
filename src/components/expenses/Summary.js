@@ -1,31 +1,21 @@
 import React from "react";
 
 const Summary = (props) => {
-  console.log({
-    totalsByCategory: props.totalsByCategory,
-    type: typeof props.totalsByCategory,
-  });
-  if (props.totalsByCategory)
-    Object.keys(props.totalsByCategory).forEach((cat) => {
-      console.log(`<th>${cat}</th>`);
-    });
-
   return (
     <>
       <h2>Summary</h2>
       <table className="table table-striped table-bordered">
-        <thead>
-          <tr>
-            <th>Total</th>
-            {/* {Object.keys(props.totalsByCategory).forEach((cat) => (
-              <th>{cat}</th>
-            ))} */}
-          </tr>
-        </thead>
         <tbody>
           <tr>
+            <th>Total</th>
             <td>{props.total}</td>
           </tr>
+          {Object.keys(props.totalsByCategory).map((cat) => (
+            <tr key={cat}>
+              <th>{cat}</th>
+              <td>{props.totalsByCategory[cat]}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </>

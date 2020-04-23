@@ -4,19 +4,19 @@ import { NewExpenseLineForm } from "./NewExpenseLineForm";
 import { Summary } from "./Summary";
 import { reducer } from "./reducer";
 import { actionTypes } from "./actionTypes";
-import { setAuthAction } from "./actions";
+import { setAuthAction, deleteExpenseAction } from "./actions";
 
 const initialState = {
   expenses: [],
   isFetching: false,
   hasError: false,
-  authToken: null,
-  authUser: null,
   expenseToAdd: null,
   idToDelete: null,
   total: 0,
   totalsByCategory: {},
 };
+
+// TODO (important) authToken and authUser should be stored in cookies.
 
 // TODO Create a separate Revenues panel with the incoming money!
 // TODO Click on list item to edit it!
@@ -24,7 +24,7 @@ const ExpensesPanel = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [showForm, setShowForm] = useState(false);
 
-  //
+  // Get all expenses to display. Write auth data to state.
   useEffect(() => {
     dispatch(setAuthAction(props.authUser, props.authToken));
 
@@ -54,6 +54,7 @@ const ExpensesPanel = (props) => {
       });
   }, [props.authUser, props.authToken]);
 
+  // Add expense.
   useEffect(() => {
     if (!state.expenseToAdd) {
       return;
@@ -61,11 +62,11 @@ const ExpensesPanel = (props) => {
     fetch("/expenses", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${state.authToken}`,
+        Authorization: `Bearer ${props.authToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user: state.authUser,
+        user: props.authUser,
         expense: state.expenseToAdd,
       }),
     })
@@ -95,8 +96,9 @@ const ExpensesPanel = (props) => {
         console.error(err);
         dispatch({ type: actionTypes.savingFailed });
       });
-  }, [state.authUser, state.authToken, state.expenseToAdd]);
+  }, [props.authUser, props.authToken, state.expenseToAdd]);
 
+  // Delete expense.
   useEffect(() => {
     if (!state.idToDelete) {
       return;
@@ -108,7 +110,7 @@ const ExpensesPanel = (props) => {
     fetch(`/expenses/${id}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${state.authToken}`,
+        Authorization: `Bearer ${props.authToken}`,
         "Content-Type": "application/json",
       },
     })
@@ -118,13 +120,14 @@ const ExpensesPanel = (props) => {
       .catch((err) => {
         console.error(`...delete failed for ${id}: ${err}`);
       });
-  }, [state.authToken, state.idToDelete]);
+  }, [props.authToken, state.idToDelete]);
 
-  // Update Totals
+  // Update Totals.
   useEffect(() => {
-    fetch(`/expenses/${state.authUser}/total`, {
+    console.log("Calling total route...");
+    fetch(`/expenses/${props.authUser}/total`, {
       headers: {
-        Authorization: `Bearer ${state.authToken}`,
+        Authorization: `Bearer ${props.authToken}`,
       },
     })
       .then((res) => {
@@ -142,11 +145,7 @@ const ExpensesPanel = (props) => {
         console.error(err);
         dispatch({ type: actionTypes.fetchExpensesFail }); // TODO Anything that fails -- Just use one "failed request on server" action
       });
-  }, [state.expenses, state.authUser, state.authToken]);
-
-  const deleteExpense = (id) => {
-    dispatch({ type: actionTypes.deleteExpense, payload: id });
-  };
+  }, [state.expenses, props.authUser, props.authToken]);
 
   return (
     <>
@@ -194,7 +193,7 @@ const ExpensesPanel = (props) => {
                     <td>
                       <button
                         className="btn btn-warning"
-                        onClick={() => deleteExpense(e.id)}
+                        onClick={() => dispatch(deleteExpenseAction(e.id))}
                       >
                         Delete
                       </button>
