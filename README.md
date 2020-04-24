@@ -7,3 +7,7 @@ You can add categories and expense lines...
 ## Deploy to Heroku
 
 git push heroku master
+
+# Credits
+
+GitHub Social Photo: Photo by Fabian Blank on Unsplash
