@@ -11,6 +11,8 @@ const execute = (req, res, next) => {
       }
       console.log({ userDoc });
       req.userId = userDoc._id;
+      req.hashedPassword = userDoc.hash;
+      req.userName = userDoc.username;
       req.categories = userDoc.categories;
       next();
     })

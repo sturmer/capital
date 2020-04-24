@@ -17,13 +17,12 @@ const LoginForm = (props) => {
   const handleUserLogin = (event) => {
     event.preventDefault();
 
-    // console.log("posting...", JSON.stringify(formData))
+    // console.log("posting...", JSON.stringify(formData));
 
     // TODO Am I sending the data in clear text? Can a malicious user attack my server?
-    fetch("/login", {
+    fetch(`/login/${formData.email}`, {
       method: "POST",
       body: JSON.stringify({
-        username: formData.email,
         password: formData.password,
       }),
       headers: {
@@ -38,7 +37,7 @@ const LoginForm = (props) => {
         }
       })
       .then((resJson) => {
-        // console.log("Logged in", { resJson });
+        console.log("Logged in", { resJson });
 
         props.setAuthState({
           ...props.authState,

@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 
@@ -9,6 +8,7 @@ const summaryMiddleware = require("./middlewares/summaryMiddleware");
 const expenseGetter = require("./middlewares/expenseGetter");
 const userGetter = require("./middlewares/userGetter");
 const expenseAdder = require("./middlewares/expenseAdder");
+const loginMiddleware = require("./middlewares/loginMiddleware");
 const { Expense } = require("./models/Expense");
 const { User } = require("./models/User");
 
@@ -116,58 +116,14 @@ app
       });
   });
 
-app.post("/login", (req, res) => {
-  const username = req.body.username;
-  const clearTextPassword = req.body.password;
-
-  console.log({ username, clearTextPassword });
-
-  if (username && clearTextPassword) {
-    User.findOne({ username })
-      .then((doc) => {
-        // console.log({ comment: "retrieved User", doc });
-
-        if (bcrypt.compareSync(clearTextPassword, doc.hash)) {
-          console.log("password correct");
-          // Passwords match
-          const token = jwt.sign({ username }, process.env.JWT_SECRET, {
-            expiresIn: "24h", // expires in 24 hours
-          });
-
-          // Return the JWT token for the future API calls
-          // console.log({ route: "/login", token });
-          return res.json({
-            success: true,
-            message: "Authentication successful!",
-            token,
-            user: {
-              firstName: "Admin",
-              lastName: "User",
-            },
-          });
-        } else {
-          // Passwords don't match
-          console.log("password wrong");
-          return res.status(400).json({
-            success: false,
-            message: "Wrong password",
-          });
-        }
-      })
-      .catch((err) => {
-        console.log("error in find()");
-        return res.status(400).json({
-          success: false,
-          message: err,
-        });
-      });
-  } else {
-    return res.status(400).json({
-      success: false,
-      mesage: "Authentication failed! Please, please check the request",
-    });
+app.post(
+  "/login/:user",
+  [userGetter.execute, loginMiddleware.login],
+  (req, res) => {
+    console.log({ token: req.token });
+    res.send({ token: req.token });
   }
-});
+);
 
 app.post("/signup", (req, res) => {
   const username = req.body.username;
