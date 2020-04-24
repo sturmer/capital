@@ -21,7 +21,7 @@ const App = () => {
 
   return (
     <div>
-      <Navigation isAuthenticated={state.isAuthenticated} user={state.user} />
+      <Navigation state={state} setAuthState={setState} />
 
       <Switch>
         {/* TODO make path '/' point to /expenses */}

@@ -2,14 +2,21 @@ import React from "react";
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from "reactstrap";
 import { Link } from "react-router-dom";
 
-const gConstants = require("../../constants");
+const Navigation = (props) => {
+  const logout = () => {
+    console.log("logging out...");
+    props.setAuthState({
+      isAuthenticated: false,
+      token: null,
+      user: null,
+    });
+  };
 
-const Navigation = () => {
   return (
     <div>
       <Navbar color="faded" light expand="md">
         <NavbarBrand tag={Link} to="/">
-          {gConstants.appname}
+          Budgeter
         </NavbarBrand>
 
         <Nav navbar>
@@ -23,21 +30,13 @@ const Navigation = () => {
               Categories
             </NavLink>
           </NavItem>
-          {/* TODO Add "User: name" if logged in, and a logout button */}
-          {/* {props.isAuthenticated ? (
-            <div>
-              <NavItem>
-                <NavLink tag={Link} to="/">
-                  Hi, {props.user.firstName}
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink tag={Link} to="/">
-                  Hi, {props.user.firstName}
-                </NavLink>
-              </NavItem>
-            </div>
-          ) : null} */}
+          {props.state.isAuthenticated && (
+            <NavItem>
+              <button className="btn btn-primary" onClick={logout}>
+                Logout {props.state.user}
+              </button>
+            </NavItem>
+          )}
         </Nav>
       </Navbar>
     </div>
