@@ -1,5 +1,6 @@
 import { actionTypes } from "./actionTypes";
 
+// FIXME We are doing fetch in here...
 const reducer = (state, action) => {
   let newState = null;
   switch (action.type) {

@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 
 const middleware = require("./middlewares/authMiddleware");
@@ -67,16 +66,8 @@ app.delete("/expenses/:expenseId", middleware.checkToken, (req, res) => {
 
 app
   .route("/categories/:user")
-  .get(middleware.checkToken, (req, res) => {
-    User.findOne({ username: req.params.user })
-      .then((doc) => {
-        console.log({ doc });
-        return res.json(doc.categories);
-      })
-      .catch((err) => {
-        console.error(err);
-        return res.status(400).end();
-      });
+  .get([middleware.checkToken, userGetter.execute], (req, res) => {
+    res.send(req.categories);
   })
   .post(middleware.checkToken, (req, res) => {
     console.log({ category: req.body.category, user: req.params.user });
@@ -98,22 +89,16 @@ app
         return res.status(400).end();
       });
   })
-  .delete(middleware.checkToken, (req, res) => {
+  .delete([middleware.checkToken, userGetter.execute], (req, res) => {
     console.log("Deleting...", { target: req.body.target });
-    User.findOne({ username: req.params.user })
-      .then((result) => {
-        console.log({ result });
-        const idx = result.categories.indexOf(req.body.target);
-        if (idx > -1) {
-          result.categories.splice(idx, 1);
-        }
-        result.save();
-        return res.json({ updatedCategories: result.categories });
-      })
-      .catch((err) => {
-        console.error(err);
-        return res.status(400).end();
-      });
+
+    const categories = req.userDoc.categories;
+    const idx = categories.indexOf(req.body.target);
+    if (idx > -1) {
+      categories.splice(idx, 1);
+    }
+    req.userDoc.save();
+    res.send({ updatedCategories: req.userDoc.categories });
   });
 
 app.post(
@@ -125,25 +110,8 @@ app.post(
   }
 );
 
-app.post("/signup", (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-
-  console.log({ username, password });
-
-  // TODO be async or use promise
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  const newUser = new User({ username, hash: hashedPassword });
-  newUser
-    .save()
-    .then((doc) => {
-      console.log({ doc });
-      return res.end();
-    })
-    .catch((err) => {
-      console.error(err);
-      return res.status(400).end();
-    });
+app.post("/signup", userGetter.signup, (req, res) => {
+  res.end();
 });
 
 // Serve the static files from the React app when in production
