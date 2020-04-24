@@ -197,7 +197,6 @@ const publicPath = path.join(
   "..",
   process.env.NODE_ENV === "production" ? "build" : "public"
 );
-// console.log({ publicPath });
 app.use(express.static(publicPath));
 app.get("*", (req, res) => {
   res.sendFile(path.join(publicPath, "index.html"));
