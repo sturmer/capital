@@ -65,14 +65,13 @@ const ExpensesPanel = (props) => {
     // On refresh, it appears at the right place.
     // Desired behavior: I expect to fetch all and display them using sort; this is
     // not the case.
-    fetch("/expenses", {
+    fetch(`/expenses/${props.authUser}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${props.authToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user: props.authUser,
         expense: state.expenseToAdd,
       }),
     })

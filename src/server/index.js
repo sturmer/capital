@@ -8,6 +8,7 @@ const middleware = require("./middlewares/authMiddleware");
 const summaryMiddleware = require("./middlewares/summaryMiddleware");
 const expenseGetter = require("./middlewares/expenseGetter");
 const userGetter = require("./middlewares/userGetter");
+const expenseAdder = require("./middlewares/expenseAdder");
 const { Expense } = require("./models/Expense");
 const { User } = require("./models/User");
 
@@ -34,53 +35,22 @@ app.get(
   }
 );
 
-app.get(
-  "/expenses/:user",
-  [middleware.checkToken, userGetter.execute, expenseGetter.execute],
-  (req, res) => {
-    return res.send(req.result);
-  }
-);
-
 // TODO Switch to GraphQL
-app.post("/expenses", middleware.checkToken, (req, res) => {
-  console.log("server: adding expense...", {
-    expense: req.body.expense,
-    user: req.body.user,
-  });
+app
+  .route("/expenses/:user")
+  .get(
+    [middleware.checkToken, userGetter.execute, expenseGetter.execute],
+    (req, res) => {
+      return res.send(req.result);
+    }
+  )
 
-  // TODO Put compute logic in middlewares
-  User.findOne({ username: req.body.user })
-    .then((userDoc) => {
-      // Can the user be non-existing? No, because we get it from the auth
-      // state of the client component.
-      const { amount, date, category, toFrom, description } = req.body.expense;
-      const newExpense = new Expense({
-        user: userDoc._id,
-        category,
-        date,
-        amount,
-        toFrom,
-        description,
-      });
-
-      newExpense
-        .save()
-        .then((doc) => {
-          // console.log("Created expense", { doc });
-          return res.status(200).json({ expenseId: doc._id });
-        })
-        .catch((err) => {
-          console.error(err);
-          return res.status(400).end();
-        });
-    })
-
-    .catch((userFindErr) => {
-      console.error(userFindErr);
-      return res.status(400).end();
-    });
-});
+  .post(
+    [middleware.checkToken, userGetter.execute, expenseAdder.add],
+    (req, res) => {
+      res.send({ expenseId: req.expenseId });
+    }
+  );
 
 app.delete("/expenses/:expenseId", middleware.checkToken, (req, res) => {
   // console.log(`deleting ${req.params.expenseId}`);
