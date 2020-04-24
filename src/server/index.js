@@ -56,7 +56,8 @@ app.delete("/expenses/:expenseId", middleware.checkToken, (req, res) => {
   Expense.findByIdAndDelete(req.params.expenseId)
     .then((expense) => {
       console.log("deleted", { expense });
-      return res.json({});
+      // TODO Just return status 200
+      return res.end();
     })
     .catch((err) => {
       console.error(err);
@@ -105,7 +106,7 @@ app.post(
   "/login/:user",
   [userGetter.execute, loginMiddleware.login],
   (req, res) => {
-    console.log({ token: req.token });
+    // console.log({ token: req.token });
     res.send({ token: req.token });
   }
 );

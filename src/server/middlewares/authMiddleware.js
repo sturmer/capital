@@ -22,6 +22,7 @@ const checkToken = (req, res, next) => {
   //   token,
   //   secret: process.env.JWT_SECRET,
   // });
+
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) {

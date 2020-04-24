@@ -34,6 +34,7 @@ const ExpensesPanel = (props) => {
     fetch(`/expenses/${props.authUser}`, {
       headers: { Authorization: `Bearer ${props.authToken}` },
     })
+      // TODO Remove this res.json/resJson absurdity
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -120,7 +121,10 @@ const ExpensesPanel = (props) => {
       },
     })
       .then((res) => {
-        console.log(`...deleted ${id} [${res}]`);
+        if (res.status !== 200) {
+          throw new Error(`Can't delete ${id}`);
+        }
+        console.log(`...deleted ${id}`);
       })
       .catch((err) => {
         console.error(`...delete failed for ${id}: ${err}`);

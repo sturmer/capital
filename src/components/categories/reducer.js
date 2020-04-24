@@ -45,13 +45,10 @@ const reducer = (state, action) => {
       })
         .then((res) => {
           if (res.status === 200) {
-            return res.json();
+            console.log("Deleted");
           } else {
             throw new Error(res.error);
           }
-        })
-        .then((_resJson) => {
-          console.log("Deleted");
         })
         .catch((err) => {
           console.error(err);
