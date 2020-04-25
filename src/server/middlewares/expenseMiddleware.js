@@ -62,4 +62,16 @@ const get = (req, res, next) => {
     });
 };
 
-module.exports = { add, get };
+const deleteExpense = (req, res) => {
+  Expense.findByIdAndDelete(req.params.expenseId)
+    .then((expense) => {
+      console.log("deleted", { expense });
+      return res.end();
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(400).end();
+    });
+};
+
+module.exports = { add, get, deleteExpense };

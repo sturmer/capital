@@ -20,7 +20,7 @@ app.get(
   "/expenses/:user/total",
   [
     middleware.checkToken,
-    userMiddleware.execute,
+    userMiddleware.getUser,
     expenseMiddleware.get,
     summaryMiddleware.computeSummary,
   ],
@@ -37,82 +37,45 @@ app.get(
 app
   .route("/expenses/:user")
   .get(
-    [middleware.checkToken, userMiddleware.execute, expenseMiddleware.get],
+    [middleware.checkToken, userMiddleware.getUser, expenseMiddleware.get],
     (req, res) => {
       return res.send(req.result);
     }
   )
-
   .post(
-    [middleware.checkToken, userMiddleware.execute, expenseMiddleware.get],
+    [middleware.checkToken, userMiddleware.getUser, expenseMiddleware.get],
     (req, res) => {
       res.send({ expenseId: req.expenseId });
     }
   );
 
-app.delete("/expenses/:expenseId", middleware.checkToken, (req, res) => {
-  // console.log(`deleting ${req.params.expenseId}`);
-  Expense.findByIdAndDelete(req.params.expenseId)
-    .then((expense) => {
-      console.log("deleted", { expense });
-      // TODO Just return status 200
-      return res.end();
-    })
-    .catch((err) => {
-      console.error(err);
-      return res.status(400).end();
-    });
-});
+app.delete("/expenses/:expenseId", [
+  middleware.checkToken,
+  expenseMiddleware.deleteExpense,
+]);
 
 app
   .route("/categories/:user")
-  .get([middleware.checkToken, userMiddleware.execute], (req, res) => {
+  .get([middleware.checkToken, userMiddleware.getUser], (req, res) => {
     res.send(req.categories);
   })
-  .post(middleware.checkToken, (req, res) => {
-    console.log({ category: req.body.category, user: req.params.user });
-
-    User.updateOne(
-      { username: req.params.user },
-      { $push: { categories: req.body.category } }
-    )
-      .then((result) => {
-        console.log({ result });
-
-        // It should be equivalent to do: User.findOne, and then on the result: result.push(category), result.save();
-        // Would that be less efficient?
-
-        return res.end();
-      })
-      .catch((err) => {
-        console.error(err);
-        return res.status(400).end();
-      });
-  })
-  .delete([middleware.checkToken, userMiddleware.execute], (req, res) => {
-    console.log("Deleting...", { target: req.body.target });
-
-    const categories = req.userDoc.categories;
-    const idx = categories.indexOf(req.body.target);
-    if (idx > -1) {
-      categories.splice(idx, 1);
-    }
-    req.userDoc.save();
-    res.send({ updatedCategories: req.userDoc.categories });
-  });
+  .post([middleware.checkToken, userMiddleware.addCategory])
+  .delete([
+    middleware.checkToken,
+    userMiddleware.getUser,
+    userMiddleware.deleteCategory,
+  ]);
 
 app.post(
   "/login/:user",
-  [userMiddleware.execute, loginMiddleware.login],
+  [userMiddleware.getUser, loginMiddleware.login],
   (req, res) => {
     // console.log({ token: req.token });
     res.send({ token: req.token });
   }
 );
 
-app.post("/signup", userMiddleware.signup, (req, res) => {
-  res.end();
-});
+app.post("/signup", userMiddleware.signup);
 
 // Serve the static files from the React app when in production
 const publicPath = path.join(
