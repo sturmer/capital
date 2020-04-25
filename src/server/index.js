@@ -4,9 +4,8 @@ const dotenv = require("dotenv");
 
 const middleware = require("./middlewares/authMiddleware");
 const summaryMiddleware = require("./middlewares/summaryMiddleware");
-const expenseGetter = require("./middlewares/expenseGetter");
 const userGetter = require("./middlewares/userGetter");
-const expenseAdder = require("./middlewares/expenseAdder");
+const expenseMiddleware = require("./middlewares/expenseMiddleware");
 const loginMiddleware = require("./middlewares/loginMiddleware");
 const { Expense } = require("./models/Expense");
 const { User } = require("./models/User");
@@ -22,7 +21,7 @@ app.get(
   [
     middleware.checkToken,
     userGetter.execute,
-    expenseGetter.execute,
+    expenseMiddleware.get,
     summaryMiddleware.computeSummary,
   ],
   (req, res) => {
@@ -38,14 +37,14 @@ app.get(
 app
   .route("/expenses/:user")
   .get(
-    [middleware.checkToken, userGetter.execute, expenseGetter.execute],
+    [middleware.checkToken, userGetter.execute, expenseMiddleware.get],
     (req, res) => {
       return res.send(req.result);
     }
   )
 
   .post(
-    [middleware.checkToken, userGetter.execute, expenseAdder.add],
+    [middleware.checkToken, userGetter.execute, expenseMiddleware.get],
     (req, res) => {
       res.send({ expenseId: req.expenseId });
     }
