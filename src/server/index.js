@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 
 const middleware = require("./middlewares/authMiddleware");
 const summaryMiddleware = require("./middlewares/summaryMiddleware");
-const userGetter = require("./middlewares/userGetter");
+const userMiddleware = require("./middlewares/userMiddleware");
 const expenseMiddleware = require("./middlewares/expenseMiddleware");
 const loginMiddleware = require("./middlewares/loginMiddleware");
 const { Expense } = require("./models/Expense");
@@ -20,7 +20,7 @@ app.get(
   "/expenses/:user/total",
   [
     middleware.checkToken,
-    userGetter.execute,
+    userMiddleware.execute,
     expenseMiddleware.get,
     summaryMiddleware.computeSummary,
   ],
@@ -37,14 +37,14 @@ app.get(
 app
   .route("/expenses/:user")
   .get(
-    [middleware.checkToken, userGetter.execute, expenseMiddleware.get],
+    [middleware.checkToken, userMiddleware.execute, expenseMiddleware.get],
     (req, res) => {
       return res.send(req.result);
     }
   )
 
   .post(
-    [middleware.checkToken, userGetter.execute, expenseMiddleware.get],
+    [middleware.checkToken, userMiddleware.execute, expenseMiddleware.get],
     (req, res) => {
       res.send({ expenseId: req.expenseId });
     }
@@ -66,7 +66,7 @@ app.delete("/expenses/:expenseId", middleware.checkToken, (req, res) => {
 
 app
   .route("/categories/:user")
-  .get([middleware.checkToken, userGetter.execute], (req, res) => {
+  .get([middleware.checkToken, userMiddleware.execute], (req, res) => {
     res.send(req.categories);
   })
   .post(middleware.checkToken, (req, res) => {
@@ -89,7 +89,7 @@ app
         return res.status(400).end();
       });
   })
-  .delete([middleware.checkToken, userGetter.execute], (req, res) => {
+  .delete([middleware.checkToken, userMiddleware.execute], (req, res) => {
     console.log("Deleting...", { target: req.body.target });
 
     const categories = req.userDoc.categories;
@@ -103,14 +103,14 @@ app
 
 app.post(
   "/login/:user",
-  [userGetter.execute, loginMiddleware.login],
+  [userMiddleware.execute, loginMiddleware.login],
   (req, res) => {
     // console.log({ token: req.token });
     res.send({ token: req.token });
   }
 );
 
-app.post("/signup", userGetter.signup, (req, res) => {
+app.post("/signup", userMiddleware.signup, (req, res) => {
   res.end();
 });
 
