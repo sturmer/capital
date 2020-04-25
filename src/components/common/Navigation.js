@@ -18,26 +18,31 @@ const Navigation = (props) => {
         <NavbarBrand tag={Link} to="/">
           Budgeter
         </NavbarBrand>
+        {props.state.isAuthenticated && (
+          <Nav navbar>
+            <NavItem>
+              <NavLink tag={Link} to="/">
+                Expenses
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink tag={Link} to="/summary">
+                Summary
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink tag={Link} to="/categories">
+                Categories
+              </NavLink>
+            </NavItem>
 
-        <Nav navbar>
-          <NavItem>
-            <NavLink tag={Link} to="/">
-              Expenses
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink tag={Link} to="/categories">
-              Categories
-            </NavLink>
-          </NavItem>
-          {props.state.isAuthenticated && (
             <NavItem>
               <button className="btn btn-primary" onClick={logout}>
                 Logout {props.state.user}
               </button>
             </NavItem>
-          )}
-        </Nav>
+          </Nav>
+        )}
       </Navbar>
     </div>
   );

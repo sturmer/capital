@@ -4,6 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import "./App.css";
 import { CategoriesPanel } from "./categories/CategoriesPanel";
 import { ExpensesPanel } from "./expenses/ExpensesPanel";
+import { Summary } from "./summary/Summary";
 import { Navigation } from "./common/Navigation";
 import { LoginForm } from "./login/LoginForm";
 import { ProtectedRoute } from "./common/ProtectedRoute";
@@ -20,7 +21,7 @@ const App = () => {
   // console.log({ state });
 
   return (
-    <div>
+    <div className="container">
       <Navigation state={state} setAuthState={setState} />
 
       <Switch>
@@ -32,6 +33,10 @@ const App = () => {
         <ProtectedRoute path="/categories" authState={state}>
           <CategoriesPanel authUser={state.user} authToken={state.token} />
         </ProtectedRoute>
+        <ProtectedRoute path="/summary" authState={state}>
+          <Summary authUser={state.user} authToken={state.token} />
+        </ProtectedRoute>
+
         <Route
           path="/login"
           render={() => <LoginForm authState={state} setAuthState={setState} />}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useReducer } from "react";
 
 import { NewExpenseLineForm } from "./NewExpenseLineForm";
-import { Summary } from "./Summary";
 import { reducer } from "./reducer";
 import { actionTypes } from "./actionTypes";
 import { deleteExpenseAction } from "./actions";
@@ -12,9 +11,6 @@ const initialState = {
   hasError: false,
   expenseToAdd: null,
   idToDelete: null,
-  total: 0,
-  totalsByCategory: {},
-  totalsByMonth: {},
 };
 
 // TODO (important) authToken and authUser should be stored in cookies.
@@ -129,29 +125,29 @@ const ExpensesPanel = (props) => {
       });
   }, [props.authToken, state.idToDelete]);
 
-  // Update Totals.
-  useEffect(() => {
-    fetch(`/expenses/${props.authUser}/total`, {
-      headers: {
-        Authorization: `Bearer ${props.authToken}`,
-      },
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw res;
-        }
-      })
-      .then((resJson) => {
-        console.log({ totals: resJson });
-        dispatch({ type: actionTypes.updateTotal, payload: resJson });
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch({ type: actionTypes.fetchExpensesFail }); // TODO Anything that fails -- Just use one "failed request on server" action
-      });
-  }, [state.expenses, props.authUser, props.authToken]);
+  // // Update Totals.
+  // useEffect(() => {
+  //   fetch(`/expenses/${props.authUser}/total`, {
+  //     headers: {
+  //       Authorization: `Bearer ${props.authToken}`,
+  //     },
+  //   })
+  //     .then((res) => {
+  //       if (res.ok) {
+  //         return res.json();
+  //       } else {
+  //         throw res;
+  //       }
+  //     })
+  //     .then((resJson) => {
+  //       console.log({ totals: resJson });
+  //       dispatch({ type: actionTypes.updateTotal, payload: resJson });
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //       dispatch({ type: actionTypes.fetchExpensesFail }); // TODO Anything that fails -- Just use one "failed request on server" action
+  //     });
+  // }, [state.expenses, props.authUser, props.authToken]);
 
   return (
     <>
@@ -225,11 +221,11 @@ const ExpensesPanel = (props) => {
             New Expense
           </button>
 
-          <Summary
+          {/* <Summary
             total={state.total}
             totalsByCategory={state.totalsByCategory}
             totalsByMonth={state.totalsByMonth}
-          />
+          /> */}
         </>
       )}
     </>
