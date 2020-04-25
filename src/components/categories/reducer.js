@@ -1,15 +1,7 @@
 import { actionTypes } from "./actionTypes";
 
-// FIXME We are doing fetch in here...
 const reducer = (state, action) => {
-  let newState = null;
   switch (action.type) {
-    case action.SET_AUTH:
-      return {
-        ...state,
-        authToken: action.payload.token,
-        authUser: action.payload.user,
-      };
     case actionTypes.fetchCategories:
       return {
         ...state,
@@ -29,63 +21,42 @@ const reducer = (state, action) => {
         categories: action.payload,
       };
 
+    case actionTypes.REQUEST_SERVER:
+      return {
+        ...state,
+        isFetching: true,
+      };
+
+    case actionTypes.SERVED_SUCCESSFUL:
+      return {
+        ...state,
+        isFetching: false,
+        idToDelete: null,
+        categoryToSave: null,
+      };
+
+    case actionTypes.SERVER_ERROR:
+      return {
+        ...state,
+        isFetching: false,
+        hasError: true,
+        idToDelete: null,
+        categoryToSave: null,
+      };
+
     case actionTypes.deleteCategory:
-      newState = {
+      return {
         ...state,
         categories: state.categories.filter((c) => c !== action.payload),
+        idToDelete: action.payload,
       };
-
-      fetch(`/categories/${state.authUser}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${state.authToken}`,
-        },
-        body: JSON.stringify({ target: action.payload }),
-      })
-        .then((res) => {
-          if (res.status === 200) {
-            console.log("Deleted");
-          } else {
-            throw new Error(res.error);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-
-      return newState;
 
     case actionTypes.addCategory:
-      console.log({ action });
-      newState = {
+      return {
         ...state,
         categories: [...state.categories, action.payload.name],
+        categoryToSave: action.payload.name,
       };
-
-      // Persist new category
-      fetch(`/categories/${state.authUser}`, {
-        method: "POST",
-        body: JSON.stringify({
-          category: action.payload.name,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${state.authToken}`,
-        },
-      })
-        .then((res) => {
-          if (res.status === 200) {
-            console.log("Saved");
-          } else {
-            throw new Error(res.error);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-
-      return newState;
 
     default:
       return state;

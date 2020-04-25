@@ -4,8 +4,12 @@ const actionTypes = {
   fetchCategoriesFailure: "FETCH_CATEGORIES_FAILURE",
   deleteCategory: "DELETE_CATEGORY",
   addCategory: "ADD_CATEGORY",
-  SET_AUTH: "SET_AUTH",
+
+  // TODO Consiger only using these, remove fetchCategories/Success/Failure
+  REQUEST_SERVER: "REQUEST_SERVER",
+  SERVED_SUCCESSFUL: "SERVED_SUCCESSFUL",
+  SERVER_ERROR: "SERVER_ERROR",
 };
 
-// TODO Make actiontypes unique for categories and expenses
+// TODO Make single file actiontypes for categories and expenses
 export { actionTypes };
