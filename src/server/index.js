@@ -7,8 +7,6 @@ const summaryMiddleware = require("./middlewares/summaryMiddleware");
 const userMiddleware = require("./middlewares/userMiddleware");
 const expenseMiddleware = require("./middlewares/expenseMiddleware");
 const loginMiddleware = require("./middlewares/loginMiddleware");
-const { Expense } = require("./models/Expense");
-const { User } = require("./models/User");
 
 dotenv.config();
 require("./database");
