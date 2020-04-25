@@ -6,7 +6,7 @@ const actionTypes = {
   addCategory: "ADD_CATEGORY",
 
   // TODO Consiger only using these, remove fetchCategories/Success/Failure
-  REQUEST_SERVER: "REQUEST_SERVER",
+  START_REQUEST_SERVER: "START_REQUEST_SERVER",
   SERVED_SUCCESSFUL: "SERVED_SUCCESSFUL",
   SERVER_ERROR: "SERVER_ERROR",
 };

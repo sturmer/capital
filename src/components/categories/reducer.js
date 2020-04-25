@@ -21,7 +21,7 @@ const reducer = (state, action) => {
         categories: action.payload,
       };
 
-    case actionTypes.REQUEST_SERVER:
+    case actionTypes.START_REQUEST_SERVER:
       return {
         ...state,
         isFetching: true,

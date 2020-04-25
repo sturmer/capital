@@ -1,12 +1,5 @@
 import { actionTypes } from "./actionTypes";
 
-const setAuthAction = (user, token) => {
-  return {
-    type: actionTypes.SET_AUTH,
-    payload: { user, token },
-  };
-};
-
 // TODO Create the other actions and use them in the panel.
 // dispatch({ type: actionTypes.fetchExpenses });
 
@@ -33,4 +26,4 @@ const deleteExpenseAction = (id) => {
   return { type: actionTypes.deleteExpense, payload: id };
 };
 
-export { setAuthAction, deleteExpenseAction };
+export { deleteExpenseAction };

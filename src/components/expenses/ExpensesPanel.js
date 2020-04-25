@@ -4,7 +4,7 @@ import { NewExpenseLineForm } from "./NewExpenseLineForm";
 import { Summary } from "./Summary";
 import { reducer } from "./reducer";
 import { actionTypes } from "./actionTypes";
-import { setAuthAction, deleteExpenseAction } from "./actions";
+import { deleteExpenseAction } from "./actions";
 
 const initialState = {
   expenses: [],
@@ -27,8 +27,6 @@ const ExpensesPanel = (props) => {
 
   // Get all expenses to display. Write auth data to state.
   useEffect(() => {
-    dispatch(setAuthAction(props.authUser, props.authToken));
-
     dispatch({ type: actionTypes.fetchExpenses });
 
     fetch(`/expenses/${props.authUser}`, {

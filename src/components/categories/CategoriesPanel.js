@@ -2,6 +2,15 @@ import React, { useState, useEffect, useReducer } from "react";
 
 import { NewCategoryForm } from "./NewCategoryForm";
 import { reducer } from "./reducer";
+import {
+  createDeleteAction,
+  createFetchCategoriesAction,
+  createFetchCategoriesFailureAction,
+  createStartFetchAction,
+  createRequestServerAction,
+  createServerSuccessAction,
+  createServerErrorAction,
+} from "./actions";
 import { actionTypes } from "./actionTypes";
 
 const initialState = {
@@ -18,13 +27,7 @@ const CategoriesPanel = (props) => {
 
   // Fetch categories from server
   useEffect(() => {
-    // Save user and token for next requests (add/remove category)
-    dispatch({
-      type: actionTypes.setAuth,
-      payload: { user: props.authUser, token: props.authToken },
-    });
-
-    dispatch({ type: actionTypes.fetchCategories });
+    dispatch(createStartFetchAction());
 
     fetch(`/categories/${props.authUser}`, {
       headers: { Authorization: `Bearer ${props.authToken}` },
@@ -38,14 +41,11 @@ const CategoriesPanel = (props) => {
       })
       .then((resJson) => {
         console.log({ resJson });
-        dispatch({
-          type: actionTypes.fetchCategoriesSuccess,
-          payload: resJson,
-        });
+        dispatch(createFetchCategoriesAction(resJson));
       })
       .catch((err) => {
         console.log(err);
-        dispatch({ type: actionTypes.fetchCategoriesFailure });
+        dispatch(createFetchCategoriesFailureAction());
       });
   }, [props.authUser, props.authToken]);
 
@@ -55,7 +55,7 @@ const CategoriesPanel = (props) => {
       return;
     }
 
-    dispatch({ type: actionTypes.REQUEST_SERVER });
+    dispatch(createRequestServerAction());
 
     fetch(`/categories/${props.authUser}`, {
       method: "DELETE",
@@ -67,9 +67,9 @@ const CategoriesPanel = (props) => {
     }).then((res) => {
       if (res.status === 200) {
         console.log("Deleted");
-        dispatch({ type: actionTypes.SERVED_SUCCESSFUL });
+        dispatch(createServerSuccessAction());
       } else {
-        dispatch({ type: actionTypes.SERVER_ERROR });
+        dispatch(createServerErrorAction());
       }
     });
   }, [props.authToken, props.authUser, state.idToDelete]);
@@ -103,7 +103,7 @@ const CategoriesPanel = (props) => {
   }, [props.authToken, props.authUser, state.categoryToSave]);
 
   const deleteCategory = (categoryName) => {
-    dispatch({ type: actionTypes.deleteCategory, payload: categoryName });
+    dispatch(createDeleteAction(categoryName));
   };
 
   // console.log({ state: JSON.stringify(state) });
