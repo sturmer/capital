@@ -24,7 +24,7 @@
   "scripts": {
     "dev": "nodemon src/server/index.js",
     "start": "node src/server/index.js",
-    "startClient": "react-scripts start",
+    "client": "react-scripts start",
     "build": "react-scripts build",
     "heroku-postbuild": "cd src/ && npm install --only=dev && npm install && npm run build",
     "test": "react-scripts test",

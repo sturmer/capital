@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, BrowserRouter } from "react-router-dom";
 
 import "./App.css";
 import { CategoriesPanel } from "./categories/CategoriesPanel";
@@ -22,26 +22,29 @@ const App = () => {
 
   return (
     <div className="container">
-      <Navigation state={state} setAuthState={setState} />
+      <BrowserRouter>
+        <Navigation state={state} setAuthState={setState} />
+        <Switch>
+          {/* TODO make path '/' point to /expenses */}
+          <ProtectedRoute exact path="/" authState={state}>
+            <ExpensesPanel authUser={state.user} authToken={state.token} />
+          </ProtectedRoute>
 
-      <Switch>
-        {/* TODO make path '/' point to /expenses */}
-        <ProtectedRoute exact path="/" authState={state}>
-          <ExpensesPanel authUser={state.user} authToken={state.token} />
-        </ProtectedRoute>
+          <ProtectedRoute path="/categories" authState={state}>
+            <CategoriesPanel authUser={state.user} authToken={state.token} />
+          </ProtectedRoute>
+          <ProtectedRoute path="/summary" authState={state}>
+            <Summary authUser={state.user} authToken={state.token} />
+          </ProtectedRoute>
 
-        <ProtectedRoute path="/categories" authState={state}>
-          <CategoriesPanel authUser={state.user} authToken={state.token} />
-        </ProtectedRoute>
-        <ProtectedRoute path="/summary" authState={state}>
-          <Summary authUser={state.user} authToken={state.token} />
-        </ProtectedRoute>
-
-        <Route
-          path="/login"
-          render={() => <LoginForm authState={state} setAuthState={setState} />}
-        />
-      </Switch>
+          <Route
+            path="/login"
+            render={() => (
+              <LoginForm authState={state} setAuthState={setState} />
+            )}
+          />
+        </Switch>
+      </BrowserRouter>
     </div>
   );
 };
